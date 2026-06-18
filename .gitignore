@@ -1,0 +1,28 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- Virtual envs ---
+.venv/
+venv/
+env/
+
+# --- Editors / OS ---
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# --- Build-prep tooling (NEVER commit one-shot installers; D-01 discipline) ---
+# Keep apply*.py / one-shot installers OUT of any repo that hashes its tree.
+apply*.py
+*_installer.py
+/_scratch/
+/_archive/

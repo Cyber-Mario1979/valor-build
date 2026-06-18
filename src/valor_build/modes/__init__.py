@@ -1,0 +1,1 @@
+"""Runtime mode model (G-16/G-17): M1 Advisory / M2 Delivery Plan / M3 WP Mode / M4 Project Mode. Kept strictly separate from the pack engine-authority axis (DESIGN/EXECUTION). Placeholder; defined in B4."""

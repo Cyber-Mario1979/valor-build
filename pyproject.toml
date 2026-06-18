@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "valor-build"
+version = "0.0.0"
+description = "VALOR build layer (Phase B): AI layer + runtime + UI, built against the frozen VALOR Architecture Pack v1.0.1 as a dependency."
+requires-python = ">=3.11"
+# D-04: Python + JSON Schema draft-07. Validation at every engine boundary.
+dependencies = [
+    "jsonschema>=4.0",
+    "referencing>=0.30",   # real $ref registry (see A3 / harness lesson; valor:// scheme handling)
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

@@ -1,0 +1,22 @@
+# LF everywhere. This is the R1 discipline made structural: the whole VALOR effort
+# kept tripping on CRLF/LF manifest mismatches. Normalize text to LF on commit so a
+# Windows checkout can never re-smudge line endings into committed blobs.
+* text=auto eol=lf
+
+# Explicit text types (belt and suspenders)
+*.py    text eol=lf
+*.md    text eol=lf
+*.yaml  text eol=lf
+*.yml   text eol=lf
+*.json  text eol=lf
+*.toml  text eol=lf
+*.cfg   text eol=lf
+*.txt   text eol=lf
+
+# Binary — never touch line endings
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.pdf   binary
+*.zip   binary
