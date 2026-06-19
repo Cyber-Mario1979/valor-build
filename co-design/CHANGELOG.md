@@ -19,7 +19,38 @@ Format follows the spirit of [Keep a Changelog](https://keepachangelog.com/). Ve
 
 ### Phase B — in progress
 - **B1 COMPLETE (build-prep-0.9):** build repo + `co-design/` published (D-01/D-09); pack pinned as a read-only **submodule** at v1.0.1 (`0ec3060`).
-- **B2 next:** runtime spec A16 (G-01) · then BUILD/ARCH + M1–M4 mode model (G-16/G-17) · Project container M4 (G-18) · full-vertical walking skeleton (G-04, PE-HIGH) · Identity-integration milestone (G-07).
+- **B2 COMPLETE (build-prep-0.10):** runtime spec A16 written (G-01).
+- **B3 next:** BUILD mode, gates log-only (G-02/D-07) · then B4 M1–M4 mode model (G-16/G-17) · Project container M4 (G-18) · full-vertical walking skeleton (G-04, PE-HIGH) · Identity-integration milestone (G-07).
+
+---
+
+## [build-prep-0.10] — 2026-06-19 — B2: A16 Runtime Target Spec written + checkpoint-delivery docs amended
+
+Second Phase-B shipment. **No pack edits** — pack stays **frozen at v1.0.1 (`0ec3060`)**. Two parts, one all-inclusive landing: (1) the B2 deliverable — A16 runtime spec written; (2) a process-doc amendment documenting `apply*.py` as the standard (never-committed) checkpoint delivery format. Co-design / doc-only; written by Mervat, owner (Amr) committed/pushed. Logged in SESSION_LOG Session 10.
+
+### Why
+Session 9 landed B1 and pointed NEXT at B2. A16 is **G-01** — the biggest buildability gap (P0): the pack says *what* the system is, never *what it is built on*. Separately, the written docs described only the *"never commit `apply*.py`"* half of the checkpoint discipline, not that `apply.py` **is** the delivery format — that omission caused a workflow misfire and is corrected here.
+
+### Added (build repo — via installer)
+- **`docs/A16_Runtime_Target_Spec.md`** — full spec replacing the skeleton:
+  - **§2 Stack (D-04):** Python ≥3.11 · draft-07 · fail-closed at every boundary · request/response envelope.
+  - **§3 WP store (G-06/D-03):** file/git · append-only ledger + tombstoning (`A04_2` §4) · lock-aware write path day one · O3 deferred as extension.
+  - **§4 LLM interface (D-08 LOCKED):** hashed prompt · temp 0 · schema-constrained JSON · 1-retry-then-escalate · audit hashes · `referencing`/absolute-`$id` resolution (A3 lesson).
+  - **§5 Enforcement map:** representative mapping + pointer to `CONTRACT_REGISTRY_v1.0.1.yaml` (7 contracts · 39 actions · 24 result schemas).
+  - **§6 Seams** A/B/C with the R2 enforcement point; identity via `A10` stub + named integration point (G-07).
+
+### Changed (process docs)
+- **`BUILD_STRATEGY.md` §5** (repo, via installer) — `apply*.py` documented as the **standard checkpoint delivery format, never committed**; gitignored; LF-deterministic / idempotent / fail-closed; manual fallback; pack never touched.
+- **`SESSION_PROTOCOL.md`** (project knowledge, owner re-upload) — Checkpoint section amended + **artifact-home → landing-mechanism** table added (repo→installer+commit · knowledge→re-upload · UI→paste).
+- **Instructions field** (UI, owner paste) — Checkpoint + Repo-discipline lines amended to match.
+
+### Decided
+- **§5 representation → representative mapping + pointer** to the registry (not inline enumeration), durable across a future pack v1.1.0 (D-02).
+- **Checkpoint delivery → gitignored `apply_sessionN.py` is standard**, manual fallback (owner-directed; landed all-inclusive).
+
+### Notes / carried
+- **Schema-count:** 52 on disk vs 51 cited — 1-file reconcile, non-blocking.
+- Installer (`apply_session10.py`) verified on a fresh clone: 4 files written, idempotent, fail-closed, 0 CR bytes, pack untouched, gitignored. Not committed.
 
 ---
 

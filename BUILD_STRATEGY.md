@@ -56,7 +56,7 @@ The single recurring gremlin across Phase A was CRLF/LF manifest mismatch. Struc
 - **`.gitattributes` forces `eol=lf`** on all text; `*.png` and other binaries are `binary`.
 - Any tool that writes files writes **LF** (`write_bytes`, never text-mode on Windows).
 - **Trust a fresh-clone verify, never the local one** — the committed/normalized state is what CI sees.
-- **One-shot installers / `apply*.py` never get committed** (`.gitignore` blocks them; D-01).
+- **`apply*.py` is the standard checkpoint delivery format — and is never committed.** Each checkpoint the assistant emits a single gitignored `apply_sessionN.py` that writes the checkpoint's **repo** docs into the working tree: **LF-deterministic, idempotent, fail-closed** (all anchors resolved before any write), and **never touching the frozen pack**. The owner runs it, reviews `git diff`, and commits **only** the resulting doc changes; `.gitignore` blocks `apply*.py` so the installer itself can never land. **Manual full-file replacement is the documented fallback.** Non-repo artifacts (e.g. `SESSION_PROTOCOL.md`, the instructions field) have other homes — see the artifact-home → landing-mechanism table in `SESSION_PROTOCOL.md` (D-01).
 - Owner-env cure (recommended): `git config core.autocrlf false` and work from a fresh LF clone.
 
 ---

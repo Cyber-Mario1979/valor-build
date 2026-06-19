@@ -8,7 +8,7 @@
 - The assistant must treat the most recent **NEXT SESSION** block as the agenda for the following session.
 - This is a *working/continuity* document, not a governed pack asset. It carries no manifest hash — and per the audit (G-03/D-01) it must live **outside** the hashed pack root.
 
-> **Note (consolidated 2026-06-18):** Sessions 1–8 were merged into this single file from per-session fragments, newest-at-top. No gaps; nothing reconstructed from memory — every entry is the verbatim session record. Only the most recent **NEXT SESSION** block (now Session 9) is the live agenda; earlier ones are historical.
+> **Note (consolidated 2026-06-18):** Sessions 1–8 were merged into this single file from per-session fragments, newest-at-top. No gaps; nothing reconstructed from memory — every entry is the verbatim session record. Only the most recent **NEXT SESSION** block (now Session 10) is the live agenda; earlier ones are historical.
 
 ---
 
@@ -26,6 +26,54 @@
 1. <action>
 2. <action>
 ```
+
+---
+
+## Session 10 — 2026-06-19  (**B2 LANDED** — A16 Runtime Target Spec written · checkpoint-delivery docs amended)
+**Focus:** No pack edits — pack stays **frozen at v1.0.1 (`0ec3060`)**. Two things landed: (1) executed Session 9's NEXT agenda — filled the **A16 skeleton's 7 sections** with already-decided, pack-grounded content (`docs/A16_Runtime_Target_Spec.md` SKELETON → **WRITTEN**); (2) closed the checkpoint-delivery doc-gap — amended `BUILD_STRATEGY.md` §5, `SESSION_PROTOCOL.md`, and the instructions field to document that `apply*.py` is the standard (never-committed) checkpoint delivery format, with the artifact-home→mechanism split made explicit. **B2 COMPLETE; B3 (BUILD mode, gates log-only) is next.** Co-design / doc-only on our side; the owner commits/pushes.
+**Read this session:** Session 9 **NEXT** block (the B2 agenda), `PHASE_B_BUILD_WORKFLOW_PLAN.md` (B2 slice), `VALOR_Build_Readiness_Gap_Assessment_v0.3.md` (G-01), the A16 skeleton, `BUILD_STRATEGY.md` §5, and the live pack at `0ec3060` — `contracts/CONTRACT_REGISTRY_v1.0.1.yaml`, contract bodies, `A04_2`/`A10` architecture docs.
+
+### B2 — what landed (grounded against the pinned pack)
+- **A16 §2 Stack (D-04):** Python ≥3.11 · JSON Schema **draft-07** · fail-closed validation at every boundary · standard request/response envelope (`contract_request`/`contract_response` defaults) · deps `jsonschema`/`referencing`/`pyyaml`.
+- **A16 §3 WP store (G-06/D-03):** file/git · append-only ID ledger + tombstoning (pack `A04_2` §4) · lock-aware write path day one (single commit chokepoint + advisory lock) · multi-user deferred as extension (O3). 8 `MUTATES_TRUTH` actions all `confirm:true`.
+- **A16 §4 LLM interface (D-08 — LOCKED):** versioned/hashed prompt · temp 0 · schema-constrained JSON · 1 silent retry → escalate · audit log prompt-version+input-hash+output-hash · `referencing`/absolute-`$id` resolution (A3 lesson; `valor://` defeats `urljoin`). Model = O1 spike.
+- **A16 §5 Contract-enforcement map:** **representative mapping + pointer** to `CONTRACT_REGISTRY_v1.0.1.yaml` as the live authoritative map (owner-decided). Pulled real from the pinned pack: **7 contracts · 39 actions** (14 READ_ONLY · 10 VALIDATE_ONLY · 8 MUTATES_TRUTH · 6 GENERATES_ARTIFACT · 1 STAGE_ONLY) · **24 distinct result schemas**. Worked examples trace the B6 slice (stage→commit→plan→doc→export).
+- **A16 §6 Seams:** A Engine↔AI (R2 enforcement point — no AI path into the pack) · B AI↔UI (provenance-stamped proposals; O2) · C UI↔Engine read path. Identity = `A10` declared-role soft-control stub + named integration point (G-07/B7).
+
+### Process amendment — checkpoint-delivery docs (this session)
+Resolves the doc-gap flagged earlier: the written docs stated only *"never commit `apply*.py`"*, never that `apply.py` **is** the checkpoint delivery format. Amended across the three artifact homes:
+- **`BUILD_STRATEGY.md` §5** (repo) → amended via this installer.
+- **`SESSION_PROTOCOL.md`** (project knowledge) → amended file emitted; owner re-uploads (cannot ride the installer — not a repo file).
+- **Instructions field** (UI) → amendment text emitted; owner pastes.
+- Codified the **artifact-home → landing-mechanism** split (repo→installer+commit · knowledge→owner re-upload · UI→owner paste) so this never recurs.
+
+### Decisions made
+- **Enforcement-map representation (B2 open choice) → resolved: representative mapping + pointer** to the registry, not inline enumeration. Rationale: the registry versions with the pack (D-02); an inline copy would silently drift on a future v1.1.0; the pointer cannot.
+- **Checkpoint delivery → confirmed standard: gitignored `apply_sessionN.py`**, manual full-file replacement as fallback. (Owner-directed; folded all-inclusive into this session's installer.)
+
+### Checks (fresh-clone, container path)
+- A16 cross-references verified against the pinned pack: 7 contracts / 39 actions / 24 result schemas read from `CONTRACT_REGISTRY_v1.0.1.yaml`; `A04_2` and `A10` anchors exist.
+- Installer applied to a fresh clone: 4 repo files written (A16, SESSION_LOG, CHANGELOG, BUILD_STRATEGY), **idempotent** on re-run, **fail-closed**, **LF-only (0 CR bytes)**, **pack untouched**, installer **gitignored**.
+
+### Artifacts produced (this session, for the owner to land)
+- **`docs/A16_Runtime_Target_Spec.md`** — SKELETON → **WRITTEN** (full replacement) — *via installer.*
+- **`BUILD_STRATEGY.md`** — §5 amended (apply.py = standard delivery) — *via installer.*
+- This **`SESSION_LOG.md`** Session 10 entry + refreshed **NEXT** block — *via installer.*
+- **`CHANGELOG.md`** entry **build-prep-0.10** + `[Unreleased]` Phase B flipped *B2-next* → **B2 done, B3 next** — *via installer.*
+- **`SESSION_PROTOCOL.md`** — amended full file — *owner re-uploads to project knowledge.*
+- **Instructions-field amendment** — text file — *owner pastes in UI.*
+- All repo changes delivered as one all-inclusive, gitignored **`apply_session10.py`** (LF-deterministic, idempotent, fail-closed); manual replacement is the fallback.
+
+### Open questions raised / carried (all non-blocking for B3)
+- **Schema-count reconcile (carried, minor):** registry maps 39 actions → 24 distinct result schemas; **52** schema files on disk at `0ec3060`; gap assessment cited **51**. 1-file discrepancy, non-blocking; reconcile when the registry is next touched.
+- Carried: O4 · **G-10 fold** confirm · O1/O2/O3.
+
+### NEXT SESSION — **Phase B / B3: BUILD mode (gates log-only / dormant)**  (G-02 / D-07)  [START FRESH CHAT]
+Per `PHASE_B_BUILD_WORKFLOW_PLAN.md` B3. Define a system **BUILD mode** where the pack's gates (Stage/Validate/Commit/Apply/Finalize/Close) are **log-only / dormant** — record the gate result, **never block** development. Document inert-vs-live behavior so the same path can later run gated in production.
+- **Exit:** BUILD mode defined; gate outcomes logged, not enforced, during build.
+- **Builds against:** A16 (B2) — the runtime spec just landed.
+- After B3 → **B4 mode model** (lifecycle ARCH/BUILD axis · engine DESIGN/EXECUTION axis · runtime M1–M4).
+- Carried (non-blocking): schema-count reconcile · O4 · G-10 fold · O1/O2/O3.
 
 ---
 
