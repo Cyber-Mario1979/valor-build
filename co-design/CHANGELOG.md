@@ -20,7 +20,38 @@ Format follows the spirit of [Keep a Changelog](https://keepachangelog.com/). Ve
 ### Phase B — in progress
 - **B1 COMPLETE (build-prep-0.9):** build repo + `co-design/` published (D-01/D-09); pack pinned as a read-only **submodule** at v1.0.1 (`0ec3060`).
 - **B2 COMPLETE (build-prep-0.10):** runtime spec A16 written (G-01).
-- **B3 next:** BUILD mode, gates log-only (G-02/D-07) · then B4 M1–M4 mode model (G-16/G-17) · Project container M4 (G-18) · full-vertical walking skeleton (G-04, PE-HIGH) · Identity-integration milestone (G-07).
+- **B3 COMPLETE (build-prep-0.11):** BUILD mode spec A17 — gates log-only (G-02/D-07).
+- **B4 next:** M1–M4 runtime mode model (G-16/G-17) · then Project container M4 (G-18) · full-vertical walking skeleton (G-04, PE-HIGH) · Identity-integration milestone (G-07).
+
+---
+
+## [build-prep-0.11] — 2026-06-19 — B3: BUILD-mode spec A17 written + gate vocabulary corrected
+
+Third Phase-B shipment. **No pack edits** — pack stays **frozen at v1.0.1 (`0ec3060`)**. Lands the B3 deliverable: a runtime **BUILD mode** spec where the pack's governance gates are log-only/dormant, with the human-confirmation gate and truth-store integrity kept always-live. Co-design / doc-only; written by Mervat, owner (Amr) committed/pushed. Logged in SESSION_LOG Session 11.
+
+### Why
+Session 10 landed B2 (A16) and pointed NEXT at B3 — **G-02** (no dormant build mode) / **D-07** (log-only in BUILD). BUILD mode lets development move through governance stops without halting, while preserving Humans-Decide and data integrity.
+
+### Added (build repo — via installer)
+- **`docs/A17_Build_Mode_Spec.md`** — new B3 spec:
+  - **§1–2:** BUILD as a runtime enforcement policy (not a calendar phase), R2-safe (no pack edit); grounded on the pack's **five canonical gates** (`A04_1` §4.1: Stage/Commit/Plan/Apply/Export).
+  - **§3:** log-only behaviour + gate-outcome record on the A16 §4 audit channel.
+  - **§4:** always-on in every mode — human-confirmation gate (A04_1 §4.2) + truth-store integrity (fail-closed writes).
+  - **§5:** inert-vs-live — one path, one switch.
+  - **§6:** R5/Blocker-A guard — `PRODUCT_TESTING_ONLY`, dormant ≠ satisfied; Finalize/Close named as non-gates.
+
+### Changed (build repo — via installer)
+- **`co-design/SESSION_LOG.md`** — Session 11 entry + refreshed NEXT block (→ B4).
+- **`co-design/CHANGELOG.md`** — this entry; `[Unreleased]` Phase B flipped B3-next → **B3 done, B4 next**.
+
+### Decided
+- **Gate enforcement in BUILD → log-only** (D-07 confirmed); **human confirmation → always live, all modes** (owner); **integrity boundary** — BUILD waives gate enforcement, not store correctness.
+- **Gate set corrected → five canonical gates**, superseding the "Stage/Validate/Commit/Apply/Finalize/Close" six-item shorthand (Validate/Finalize/Close are not orchestration gates).
+
+### Notes / carried
+- **Doc-reconcile (new, non-blocking):** fix the six-gate shorthand in G-02, the Phase-B plan, and SESSION_LOG.
+- Carried: schema-count 52/51 · O1/O2/O3/O4 · G-10 fold · G-07/B7 crypto-identity milestone.
+- Installer (`apply_session11.py`) verified on a fresh clone: 3 files written, idempotent, fail-closed, 0 CR bytes, pack untouched, gitignored. Not committed.
 
 ---
 

@@ -8,7 +8,7 @@
 - The assistant must treat the most recent **NEXT SESSION** block as the agenda for the following session.
 - This is a *working/continuity* document, not a governed pack asset. It carries no manifest hash — and per the audit (G-03/D-01) it must live **outside** the hashed pack root.
 
-> **Note (consolidated 2026-06-18):** Sessions 1–8 were merged into this single file from per-session fragments, newest-at-top. No gaps; nothing reconstructed from memory — every entry is the verbatim session record. Only the most recent **NEXT SESSION** block (now Session 10) is the live agenda; earlier ones are historical.
+> **Note (consolidated 2026-06-18):** Sessions 1–8 were merged into this single file from per-session fragments, newest-at-top. No gaps; nothing reconstructed from memory — every entry is the verbatim session record. Only the most recent **NEXT SESSION** block (now Session 11) is the live agenda; earlier ones are historical.
 
 ---
 
@@ -26,6 +26,50 @@
 1. <action>
 2. <action>
 ```
+
+---
+
+## Session 11 — 2026-06-19  (**B3 LANDED** — BUILD-mode spec A17 written · gate vocabulary corrected to the pack's five canonical gates)
+**Focus:** No pack edits — pack stays **frozen at v1.0.1 (`0ec3060`)**. Executed Session 10's NEXT agenda (B3): defined a runtime **BUILD mode** where the pack's governance gates are **log-only / dormant** — verdicts recorded, development never halted — while the **human-confirmation gate** and **truth-store integrity** stay fully live in every mode. Spec landed as `docs/A17_Build_Mode_Spec.md`. **B3 COMPLETE; B4 (runtime mode model M1–M4) is next.** Co-design / doc-only on our side; the owner commits/pushes.
+**Read this session:** Session 10 **NEXT** block (the B3 agenda), `PHASE_B_BUILD_WORKFLOW_PLAN.md` (B3 slice), `VALOR_Build_Readiness_Gap_Assessment_v0.3.md` (G-02 / D-07), `A16_Runtime_Target_Spec.md` (seams + §5 enforcement pattern), and the live pack at `0ec3060` — `A04_1_Orchestration` §4 (gate definitions + mandatory confirmations + state table), `A04_5_DocumentFactory` (DRAFT→FINAL), `A13` (closure).
+
+### B3 — what landed (grounded against the pinned pack)
+- **Two-mode model (G-02/D-07):** BUILD mode is a **runtime enforcement policy, not a calendar phase** — gates inert in BUILD, live in LIVE, one switch. R2-safe: the pack always evaluates and returns its gate verdict unchanged; only the runtime layer *around* the pack decides whether a verdict halts. No gate is ever "skipped" inside the pack.
+- **Log-only behaviour:** each gate still evaluates; a would-be `BLOCKED` is logged `would_block` + reason and the flow proceeds. Gate-outcome record (gate · mode · verdict · reason · proceeded · wp_id · actor_role · A16-§4 hashes · timestamp) rides the **same audit channel** as the A16 AI-call log, so a BUILD log shows every place LIVE *would* have stopped.
+- **Always-on in every mode (owner decision):** (1) the **human-confirmation gate** (A04_1 §4.2 Yes/No before Commit/Apply) — a No still leaves WP `STAGED`/`PROPOSED`, never mutates truth; (2) **truth-store integrity** — schema validation stays fail-closed on writes; BUILD relaxes *gate enforcement*, never *store correctness* (append-only ledger, tombstoning, never-reused IDs → a bad commit is permanent).
+- **R5 / Blocker-A guard:** every BUILD output carries `PRODUCT_TESTING_ONLY`; a dormant gate is **not** a satisfied gate; nothing in BUILD may imply an approved regulated CQV/GMP basis (Freeze-Status Register §2/§4).
+
+### Finding resolved this session — gate vocabulary corrected
+The co-design docs (G-02, Phase-B plan, SESSION_LOG NEXT) described the gates as **"Stage / Validate / Commit / Apply / Finalize / Close."** Verified against the pinned pack (`A04_1` §4.1): the canonical set is **five** — **GATE-Stage · GATE-Commit · GATE-Plan · GATE-Apply · GATE-Export**. The six-item shorthand dropped **Plan** and **Export** and folded in three non-gates (**Validate** = the fail-closed validation posture / `VALIDATE_ONLY` class; **Finalize** = DOC `DRAFT→FINAL`, `A04_5`; **Close** = architecture closure, `A13`). A17 is grounded on the five canonical gates; the wrong shorthand is flagged for a doc-only reconcile.
+
+### Decisions made
+- **Gate-enforcement in BUILD → log-only (D-07 confirmed):** gates evaluate and log, never halt development.
+- **Human confirmation → always live, all modes (owner, this session):** never dialled down, BUILD included.
+- **Integrity boundary (this session):** BUILD waives gate enforcement, not truth-store integrity — invalid writes still refused.
+- **Gate set → the pack's five canonical gates** (supersedes the six-item shorthand).
+
+### Checks (fresh-clone, container path)
+- Gate names + confirmations + state labels verified against the pinned pack: `A04_1` §4.1 (five gates), §4.2 (Commit/Apply confirmations), §4.3 (`BLOCKED` / `PRODUCT_TESTING_ONLY` states); `A04_5` (DRAFT→FINAL); `A13` (closure ≠ runtime gate).
+- Installer applied to a fresh clone: 3 repo files written (A17, SESSION_LOG, CHANGELOG), **idempotent** on re-run, **fail-closed**, **LF-only (0 CR bytes)**, **pack untouched**, installer **gitignored**.
+
+### Artifacts produced (this session, for the owner to land)
+- **`docs/A17_Build_Mode_Spec.md`** — NEW (B3 deliverable) — *via installer.*
+- This **`SESSION_LOG.md`** Session 11 entry + refreshed **NEXT** block — *via installer.*
+- **`CHANGELOG.md`** entry **build-prep-0.11** + `[Unreleased]` Phase B flipped *B3-next* → **B3 done, B4 next** — *via installer.*
+- All repo changes delivered as one gitignored **`apply_session11.py`** (LF-deterministic, idempotent, fail-closed); manual replacement is the fallback. No non-repo (knowledge/UI) artifacts this session.
+
+### Open questions raised / carried (all non-blocking for B4)
+- **Doc-reconcile (new):** fix the six-gate shorthand → five canonical gates in G-02, Phase-B plan, SESSION_LOG. Doc-only.
+- Carried: schema-count reconcile (52/51) · O1 · O2 · O3 · O4 · G-10 fold confirm · G-07/B7 crypto-identity milestone.
+
+### NEXT SESSION — **Phase B / B4: runtime mode model (M1–M4)**  (G-16 / G-17)  [START FRESH CHAT]
+Per `PHASE_B_BUILD_WORKFLOW_PLAN.md` B4. Define the runtime mode model, keeping the two axes strictly separate (R1 — no mode collision):
+- **Lifecycle axis:** `ARCH` (design the system) / `BUILD` (build the product — the mode A17 just specified).
+- **Engine-authority axis:** `DESIGN` / `EXECUTION` (the renamed pack field — do **not** redefine).
+- **Runtime modes:** `M1 Advisory` · `M2 Delivery Plan` · `M3 WP Mode` · `M4 Project Mode`; AI latitude shrinks M1→M3; every output stamped with mode + provenance.
+- **Label discipline (G-17):** `M2 Delivery Plan` ≠ `M3 WP-Tasks Planning` ≠ the **CQV plan** (a document output, not a mode) — keep all three distinct in copy.
+- **Exit:** mode model documented with both axes, runtime M1–M4, per-mode latitude, disambiguated labels.
+- Carried (non-blocking): gate doc-reconcile · schema-count · O1/O2/O3/O4 · G-10 fold · G-07/B7.
 
 ---
 
