@@ -17,8 +17,37 @@ Format follows the spirit of [Keep a Changelog](https://keepachangelog.com/). Ve
 ### Phase A — COMPLETE (shipped build-prep-0.4 → 0.8)
 - A1 mode rename (G-16) · A2 integrity tooling (G-19) · A3 vector/CI harness (G-12+G-20) · A4 standards/anchor reconciliation + `PUBLIC_EXCERPT` cleanup (G-10/G-11) · pre-A5 freeze-state cleanup · A5 freeze. **Pack frozen at v1.0.1 (`0ec3060`).**
 
-### Phase B — not yet started
-- **Phase B (build workflow):** build repo + `co-design/` (D-01/D-09) · runtime spec A16 (G-01) · BUILD/ARCH + M1–M4 mode model (G-16/G-17) · Project container M4 (G-18) · full-vertical walking skeleton (G-04, PE-HIGH) · Identity-integration milestone (G-07).
+### Phase B — in progress
+- **B1 COMPLETE (build-prep-0.9):** build repo + `co-design/` published (D-01/D-09); pack pinned as a read-only **submodule** at v1.0.1 (`0ec3060`).
+- **B2 next:** runtime spec A16 (G-01) · then BUILD/ARCH + M1–M4 mode model (G-16/G-17) · Project container M4 (G-18) · full-vertical walking skeleton (G-04, PE-HIGH) · Identity-integration milestone (G-07).
+
+---
+
+## [build-prep-0.9] — 2026-06-19 — B1: build-repo scaffold published, pack pinned as read-only submodule
+
+First Phase-B shipment. **No pack edits** — pack stays **frozen at v1.0.1 (`0ec3060`)**. This batch stands up the build repo `Cyber-Mario1979/valor-build` around the frozen pack and migrates the co-design docs into it. Co-design / doc + scaffold only; edits by Mervat, owner (Amr) committed/pushed. Logged in SESSION_LOG Session 9.
+
+### Why
+Session 8 armed Phase B; B1 is its first concrete step (per `PHASE_B_BUILD_WORKFLOW_PLAN.md`). The scaffold gives every later B-item a home and realizes D-01 (separate build repo) and D-09 (`co-design/` outside any manifest) materially rather than on paper.
+
+### Added (build repo)
+- **Repo skeleton:** `README.md`, `.gitignore` (blocks one-shot installers / `apply*.py`), `.gitattributes` (`eol=lf`), `LICENSE`, `pyproject.toml` — `valor-build` v0.0.0, `requires-python >=3.11`, deps `jsonschema` / **`referencing`** (real `$ref` registry, A3 lesson) / `pyyaml`.
+- **`BUILD_STRATEGY.md`:** repo seam, frozen-pack pin, co-evolve policy (pack changes batch into a deliberate **v1.1.0**, never a hotfix), LF discipline.
+- **`co-design/`** (outside any manifest): migrated `SESSION_LOG.md`, `CHANGELOG.md`, gap assessment v0.3, audit v1.0, **freeze-status register**, both phase plans, `README.md`.
+- **`src/valor_build/`** skeleton — `engine/` `ai/` `modes/` packages (placeholders; engine = the pack, consumed as a dependency) + `tests/test_scaffold.py`.
+- **`docs/A16_Runtime_Target_Spec.md`** — SKELETON placeholder; 7 agreed sections stubbed as the home for B2.
+
+### Decided
+- **Pin mechanism → git submodule** (read-only, pinned at `0ec3060`), resolving the BUILD_STRATEGY §2 choice of submodule vs. vendored-read-only vs. package.
+
+### Reconciled (rider)
+- Freeze-status register: scheme-decided (header) and §4 blocker-resolved dates **2026-06-19 → 2026-06-18** (owner-confirmed canonical; S7/0.8 dating). Closes the carried register date nit.
+
+### Verified (fresh clone, container)
+- Scaffold sanity test **PASS** (`1 passed`). Submodule pin **`0ec3060`** confirmed. `eol=lf` present; no installers in tree.
+
+### Not touched
+- The frozen pack. Read-only throughout; membership and manifest unchanged at **173**.
 
 ---
 

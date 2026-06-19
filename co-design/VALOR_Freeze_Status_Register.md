@@ -3,7 +3,7 @@
 **Type:** Co-design artifact — **lives OUTSIDE the hashed pack** (migrates to the build repo `co-design/` in Phase B; D-01).
 **Purpose:** One map of the v1.0.1 freeze: which status value, on what discipline/domain, is frozen vs. deliberately not — and *why*. This is the authoritative record of the A5 status sweep.
 **Baseline:** sweep applied to pack HEAD `78c40d7`; verified on two independent clones (verify 173 / smoke / harness PASS; 0 residual; 0 CR).
-**Scheme decided (owner, 2026-06-19):** lifecycle suffix `_PRE_FREEZE → _FROZEN`; capability prefix preserved; header phase `pre_freeze_controlled / PRE_FREEZE_CONTROLLED → frozen_controlled` (lowercase normalized). KS content-approval lifecycle is **out of scope** (see §2).
+**Scheme decided (owner, 2026-06-18):** lifecycle suffix `_PRE_FREEZE → _FROZEN`; capability prefix preserved; header phase `pre_freeze_controlled / PRE_FREEZE_CONTROLLED → frozen_controlled` (lowercase normalized). KS content-approval lifecycle is **out of scope** (see §2).
 
 ---
 
@@ -32,7 +32,7 @@
 | `_review_control/` (28 files) | Stale review scaffolding (Blockers, DECISION_LOG, `FINAL_FREEZE_READINESS_*`, `PHASE13_*`, `.bak_phase11` cruft) from a prior freeze attempt that did not succeed | Contradicts the real freeze; same stale-status-drift class cleaned in build-prep-0.7. Authoritative record is SESSION_LOG/CHANGELOG/gap-assessment/audit. | Yes — git history retains every byte. |
 | `EXCLUDE_DEGOVERNED_DIRS` (in `pack_excludes.py`) | The de-govern exclude that pointed at `_review_control/` | Dead once the folder is gone; removing it cuts machinery and a future "why is this here?" | Yes — git history. |
 
-## §4 — freeze_blockers_retained (resolved, owner 2026-06-19)
+## §4 — freeze_blockers_retained (resolved, owner 2026-06-18)
 
 - **Blocker B** ("Manifest regeneration and final freeze-readiness check remain blocked until all pre-freeze content edits are complete") — **REMOVED.** Pure process gate; its condition is satisfied (edits done, manifest regenerated clean at 173). Leaving it would make a `frozen_controlled` registry self-contradictory.
 - **Blocker A** ("K&S content testing-only; regulated use gated") — **RETAINED verbatim.** Not a process gate: it is the standing statement that the knowledge-standards content is *not approved for regulated use*. It is the same boundary that kept `PRE_FREEZE_USER_REVIEW_REQUIRED` (§2). Removing it would misrepresent unapproved testing-only content as unrestricted. (`freeze_blockers_retained` now holds A only.)

@@ -8,7 +8,7 @@
 - The assistant must treat the most recent **NEXT SESSION** block as the agenda for the following session.
 - This is a *working/continuity* document, not a governed pack asset. It carries no manifest hash — and per the audit (G-03/D-01) it must live **outside** the hashed pack root.
 
-> **Note (consolidated 2026-06-18):** Sessions 1–8 were merged into this single file from per-session fragments, newest-at-top. No gaps; nothing reconstructed from memory — every entry is the verbatim session record. Only the most recent **NEXT SESSION** block (Session 8) is the live agenda; earlier ones are historical.
+> **Note (consolidated 2026-06-18):** Sessions 1–8 were merged into this single file from per-session fragments, newest-at-top. No gaps; nothing reconstructed from memory — every entry is the verbatim session record. Only the most recent **NEXT SESSION** block (now Session 9) is the live agenda; earlier ones are historical.
 
 ---
 
@@ -26,6 +26,49 @@
 1. <action>
 2. <action>
 ```
+
+---
+
+## Session 9 — 2026-06-19  (**B1 LANDED** — build-repo scaffold published; pack pinned as submodule)
+**Focus:** No pack edits — pack stays **frozen at v1.0.1 (`0ec3060`)**. Executed Session 8's NEXT agenda: the **B1 build-repo scaffold** is now real and published in `Cyber-Mario1979/valor-build`. This entry is the write-up that was missing — the scaffold was in the tree but the log/changelog still read "Phase B not yet started." **B1 is now COMPLETE; B2 (A16 spec) is the next work item.** Co-design / doc-only on our side; the owner committed/pushed the repo.
+**Read this session:** Session 8 **NEXT** block (the B1 agenda), `PHASE_B_BUILD_WORKFLOW_PLAN.md` (B1 slice + B2 preview), `BUILD_STRATEGY.md`, the live cloned repo tree (fresh `--depth 1` clone of `main`).
+
+### B1 — what landed (verified against a fresh clone)
+- **Repo skeleton:** `README.md`, `.gitignore` (blocks one-shot installers / `apply*.py` per the discipline), `.gitattributes` (`eol=lf`), `LICENSE`, `pyproject.toml` (`valor-build` v0.0.0; deps `jsonschema`, **`referencing`** — the real `$ref` registry from the A3 lesson — and `pyyaml`; `requires-python >=3.11`).
+- **`BUILD_STRATEGY.md`** — repo seam + frozen-pack pin + co-evolve policy (batch pack changes into a deliberate **v1.1.0**, never a hotfix) + LF discipline.
+- **`co-design/`** (outside any manifest) — migrated and now canonical: `SESSION_LOG.md`, `CHANGELOG.md`, `VALOR_Build_Readiness_Gap_Assessment_v0.3.md`, `VALOR_Audit_Report_v1.0.md`, **`VALOR_Freeze_Status_Register.md`**, both phase plans, `README.md`.
+- **Source skeleton:** `src/valor_build/` with `engine/`, `ai/`, `modes/` packages (placeholders only — no engine; the engine is the pack, consumed as a dependency) + `tests/test_scaffold.py`.
+- **`docs/A16_Runtime_Target_Spec.md`** created as a **SKELETON placeholder** — gives B2 a home; the 7 agreed sections are stubbed (scope, D-04 stack, G-06/D-03 WP store, D-08 LLM interface, contract-enforcement map, seams, open items). Not yet written — that's B2.
+- **`pack/` submodule** pinned at **v1.0.1 / `0ec3060`** (read-only). `.gitmodules` → `VALOR_Architecture_Pack`.
+
+### Decisions made
+- **Pin mechanism (B1 / BUILD_STRATEGY §2 open choice: submodule vs. vendored-read-only vs. package) → resolved: git submodule**, read-only, pinned at `0ec3060`. Realizes **D-01** (separate build repo) and **D-09** (`co-design/` dir) materially, not just on paper.
+
+### Checks (fresh-clone, container path)
+- Scaffold sanity test **PASS** (`1 passed`; `valor_build.__version__ == "0.0.0"`).
+- Submodule pin **verified** at `0ec3060`. `.gitattributes` carries `eol=lf`. No installers/`apply*.py` in the tree.
+
+### Artifacts produced (this session, for the owner to land)
+- This **`SESSION_LOG.md`** Session 9 entry + refreshed **NEXT** block.
+- **`CHANGELOG.md`** entry **build-prep-0.9** (B1 landed) + `[Unreleased]` "Phase B" line flipped from *not started* → *B1 done, B2 next*.
+
+### Open questions raised / carried (all non-blocking for B2)
+- **O4:** `core.autocrlf false` confirmed set; 3 KS no-trailing-newline schemas still cosmetic.
+- **G-10 fold:** still awaiting owner confirm that audit C4-F1 ("drafts duplicative → nothing to fold") is settled, or the seven draft texts for a diff.
+- **Register date nit — RESOLVED this session:** the register's scheme-decided header date and §4 blocker-resolved date were reconciled **2026-06-19 → 2026-06-18** (owner-confirmed; S7/0.8 dating) in this same landing, as a build-prep-0.9 rider.
+- Carried deferrals: **O1** LLM model spike · **O2** UI design · **O3** multi-user concurrency.
+
+### NEXT SESSION — **Phase B / B2: write `docs/A16_Runtime_Target_Spec.md`**  (G-01 — biggest buildability gap)  [START FRESH CHAT]
+Per `PHASE_B_BUILD_WORKFLOW_PLAN.md` B2. Fill the A16 skeleton's 7 sections with the **already-decided** spec — **do not invent**; each section is a settled decision or a spec to write, not a guess:
+1. **Stack (D-04):** Python + JSON Schema **draft-07**; explicit contract-validation at **every boundary**; fail-closed.
+2. **WP store (G-06/D-03):** file/git, append-only ID ledger + tombstoning (A04.2 §4); **lock-aware write path from day one** (single commit chokepoint + advisory lock); multi-user **deferred** as extension (O3), not a rewrite.
+3. **LLM interface (D-08 — LOCKED):** versioned/hashed prompt asset; temp 0; schema-constrained JSON; refuse/accept loop (1 silent retry → escalate); audit-log prompt-version + input-hash + output-hash. Model = later spike (O1).
+4. **Carry the A3 lesson into §4:** validation layer must use a real `$ref` registry / absolute `$id`s (the `referencing` dep) — the pack's `valor://` scheme defeats naive `urljoin`.
+5. **Contract-enforcement map:** each engine boundary → contract action + `result_schema_ref` (**39 actions across 7 contracts**).
+6. **Seams:** Engine (L1 pack) ↔ AI (L2) ↔ UI (L3) — define each interface concretely.
+- **Discipline still applies:** LF-only; build tools never inside a hashed pack; fresh-clone verify is the source of truth; pack stays read-only.
+- After B2 lands → **B3 BUILD mode**, then B4 mode model (M1–M4).
+- Carried (non-blocking): O4 · G-10 fold confirm · O1/O2/O3.
 
 ---
 
