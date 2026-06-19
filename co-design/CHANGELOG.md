@@ -25,7 +25,36 @@ Format follows the spirit of [Keep a Changelog](https://keepachangelog.com/). Ve
 - **B1 COMPLETE (build-prep-0.9):** build repo + `co-design/` published (D-01/D-09); pack pinned as a read-only **submodule** at v1.0.1 (`0ec3060`).
 - **B2 COMPLETE (build-prep-0.10):** runtime spec A16 written (G-01).
 - **B3 COMPLETE (build-prep-0.11):** BUILD mode spec A17 — gates log-only (G-02/D-07).
-- **B4 next:** M1–M4 runtime mode model (G-16/G-17) · then Project container M4 (G-18) · full-vertical walking skeleton (G-04, PE-HIGH) · Identity-integration milestone (G-07).
+- **B4 COMPLETE (build-prep-0.12):** runtime mode model A18 — M1–M4, two axes, latitude ladder, labels (G-16/G-17).
+- **B6 next:** full-vertical walking skeleton (G-04, PE-HIGH) — B4 unblocks it; **B5** Project container (G-18) available in parallel · Identity-integration milestone (G-07) carried.
+
+---
+
+## [build-prep-0.12] — 2026-06-19 — B4: runtime mode model A18 (M1–M4)
+
+Fourth Phase-B shipment. **No pack edits** — pack stays **frozen at v1.0.1 (`0ec3060`)**. Lands the B4 deliverable: the runtime mode model — M1–M4 mapped to real action classes, the two pack/lifecycle axes kept separate from the runtime axis, the per-mode latitude ladder, and the G-17 label discipline. Co-design / doc-only; written by Mervat, owner (Amr) committed/pushed. Logged in SESSION_LOG Session 12.
+
+### Why
+Session 11 landed B3 (A17) and pointed NEXT at B4 — **G-16/G-17**. With the engine axis renamed to `DESIGN`/`EXECUTION` in Phase A, the runtime layer is free to define modes without collision; B4 does so and disambiguates the three things called "plan."
+
+### Added (build repo — via installer)
+- **`docs/A18_Runtime_Mode_Model.md`** — new B4 spec:
+  - **§1:** three axes (lifecycle / engine-authority / runtime), R1-separate; engine `[DESIGN, EXECUTION]` verified at the pin, no `M1/M2` collision.
+  - **§2:** M1–M4 mapped to registry action classes (M3 = sole truth-writing mode; M4 projection-only, no gates per D-13).
+  - **§3:** latitude ladder (M1 high → M3 low; M4 compositional) + owner decisions 3a (M1 non-binding generation, stamped) / 3b (M3 gate-level batch confirm; per-item → O2) + output stamp on the A16/A17 audit channel.
+  - **§4:** G-17 label discipline — Delivery Plan (mode) ≠ WP-tasks planning (gate step) ≠ CQV plan (document).
+
+### Changed (build repo — via installer)
+- **`co-design/SESSION_LOG.md`** — Session 12 entry + refreshed NEXT block (→ B6; B5 parallel).
+- **`co-design/CHANGELOG.md`** — this entry; `[Unreleased]` Phase B flipped B4-next → **B4 done, B6 next**.
+
+### Decided
+- **3a** M1 may generate non-binding `PROPOSED`/`DRAFT` stamped `mode: M1`; **3b** M3 keeps pack gate-level batch confirm, per-item review deferred to O2 (both owner).
+- **NEXT → B6** (walking skeleton), B5 (Project container) available in parallel.
+
+### Notes / carried
+- Carried: gate doc-reconcile (6→5) · schema-count 52/51 · O1/O2/O3 · G-10 fold · G-07/B7 crypto-identity.
+- Installer (`apply_session12.py`) verified on a fresh clone: 3 files written, idempotent, fail-closed, 0 CR bytes, pack untouched, gitignored. Not committed.
 
 ---
 

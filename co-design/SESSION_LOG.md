@@ -8,7 +8,7 @@
 - The assistant must treat the most recent **NEXT SESSION** block as the agenda for the following session.
 - This is a *working/continuity* document, not a governed pack asset. It carries no manifest hash — and per the audit (G-03/D-01) it must live **outside** the hashed pack root.
 
-> **Note (consolidated 2026-06-18):** Sessions 1–8 were merged into this single file from per-session fragments, newest-at-top. No gaps; nothing reconstructed from memory — every entry is the verbatim session record. Only the most recent **NEXT SESSION** block (now Session 11) is the live agenda; earlier ones are historical.
+> **Note (consolidated 2026-06-18):** Sessions 1–8 were merged into this single file from per-session fragments, newest-at-top. No gaps; nothing reconstructed from memory — every entry is the verbatim session record. Only the most recent **NEXT SESSION** block (now Session 12) is the live agenda; earlier ones are historical.
 
 ---
 
@@ -26,6 +26,49 @@
 1. <action>
 2. <action>
 ```
+
+---
+
+## Session 12 — 2026-06-19  (**B4 LANDED** — runtime mode model A18: M1–M4, two axes kept separate, latitude ladder, label discipline)
+**Focus:** No pack edits — pack stays **frozen at v1.0.1 (`0ec3060`)**. Executed Session 11's NEXT agenda (B4): defined the runtime mode model — **M1 Advisory · M2 Delivery Plan · M3 WP Mode · M4 Project Mode** — each mapped to real action classes from the registry, with the runtime axis kept strictly separate from the pack's `DESIGN`/`EXECUTION` engine axis and the `ARCH`/`BUILD` lifecycle axis (R1). Spec landed as `docs/A18_Runtime_Mode_Model.md`. **B4 COMPLETE; B6 (walking skeleton) is next — B5 available in parallel.** Co-design / doc-only on our side; the owner commits/pushes.
+**Read this session:** Session 11 **NEXT** block (the B4 agenda) + the D-12/D-13 pre-decided note, `PHASE_B_BUILD_WORKFLOW_PLAN.md` (B4 slice), `VALOR_Build_Readiness_Gap_Assessment_v0.3.md` (G-16/G-17, D-10/D-11), `A16`/`A17`, and the live pack at `0ec3060` — `CONTRACT_REGISTRY_v1.0.1.yaml` (7 contracts / 39 actions, per-action `side_effect` + `allowed_modes`), `A04_1` (gates + state labels).
+
+### B4 — what landed (grounded against the pinned pack)
+- **Three axes, never conflated (R1):** lifecycle `ARCH`/`BUILD` · engine-authority `DESIGN`/`EXECUTION` (pack field, reference-only) · runtime `M1–M4` (new). Verified at the pin: 7 actions `[DESIGN, EXECUTION]`, 5 `[EXECUTION]`-only, **no engine `M1/M2` collision** survives the Phase-A rename.
+- **M1–M4 defined + mapped to action classes:** M1 reaches only the 24 `READ_ONLY`/`VALIDATE_ONLY` actions; **M3 is the sole mode reaching the 8 `MUTATES_TRUTH` + 1 `STAGE_ONLY`**; M2 = plan proposals (`PROPOSED`); M4 = projection over `SELECTED_WP_SET`, no truth gates (D-13).
+- **Latitude ladder (shrinks M1→M3; M4 compositional)** with two owner decisions: **3a** — M1 may generate non-binding `PROPOSED`/`DRAFT` output stamped `mode: M1`; **3b** — M3 keeps the pack's gate-level batch confirmation (A04_1 §4.2), per-item review deferred to O2.
+- **Output stamp** (mode + lifecycle + engine-authority + state + provenance hashes) rides the **same audit channel** as A16 §4 / A17 — no parallel log.
+- **G-17 label discipline:** `M2 Delivery Plan` (mode) ≠ `M3 WP-Tasks Planning` (the `GATE-Plan` step) ≠ `CQV plan` (a document); "never bare 'plan'" rule recorded.
+
+### Decisions made
+- **3a (M1 ceiling) → non-binding generation allowed, stamped `PROPOSED`/`DRAFT` + `mode: M1`** (owner).
+- **3b (M3 confirm granularity) → pack gate-level batch confirm is the floor; per-item review = O2** (owner).
+- **NEXT pointer → B6 (walking skeleton)**, with B5 (Project container) flagged as available in parallel (recommendation; owner may flip — one-line change).
+
+### Checks (fresh-clone, container path)
+- Registry parsed at the pin: 7 contracts / 39 actions / classes {READ_ONLY 14, VALIDATE_ONLY 10, MUTATES_TRUTH 8, GENERATES_ARTIFACT 6, STAGE_ONLY 1} — matches A16 §5. Engine axis `[DESIGN, EXECUTION]` confirmed; no engine `M1/M2`.
+- Installer applied to a fresh clone: 3 repo files written (A18, SESSION_LOG, CHANGELOG), **idempotent** on re-run, **fail-closed**, **LF-only (0 CR bytes)**, **pack untouched**, installer **gitignored**.
+
+### Artifacts produced (this session, for the owner to land)
+- **`docs/A18_Runtime_Mode_Model.md`** — NEW (B4 deliverable) — *via installer.*
+- This **`SESSION_LOG.md`** Session 12 entry + refreshed **NEXT** block — *via installer.*
+- **`CHANGELOG.md`** entry **build-prep-0.12** + `[Unreleased]` Phase B flipped *B4-next* → **B4 done, B6 next** — *via installer.*
+- All repo changes delivered as one gitignored **`apply_session12.py`** (LF-deterministic, idempotent, fail-closed); manual replacement is the fallback. No non-repo (knowledge/UI) artifacts this session.
+
+### Open questions raised / carried (all non-blocking for B6)
+- **NEXT confirm:** B6 vs B5 ordering — set to B6 (B4 unblocks it); owner may flip to B5.
+- Carried: gate doc-reconcile (6→5) · schema-count 52/51 · O1 · O2 (now also M3 per-item review + M4 projection UI) · O3 · G-10 fold · G-07/B7 crypto-identity.
+
+### NEXT SESSION — **Phase B / B6: walking skeleton (PE-HIGH, BUILD mode)**  (G-04 — first runnable milestone, PE-HIGH effort)  [START FRESH CHAT]
+Per `PHASE_B_BUILD_WORKFLOW_PLAN.md` B6. Prove the path runs end-to-end, thin but full vertical:
+- **Slice:** `stage → commit → plan → doc → export` — one WP / one task / one doc / one export.
+- **Domain:** **PE-HIGH** — the only domain with a shipped pool/profile/preset (`TP/PROF/PS-PE-HIGH`); the only end-to-end-exercisable surface today.
+- **Start at the root:** `VALOR-contract-orch-wp` stage→commit (the truth-owning root), then extend via `PLAN_GENERATE_PROPOSAL`, `WP_APPLY_PLAN_PROPOSAL`, `DOC_GENERATE_DRAFT`/`DOC_FINALIZE_ARTIFACT`, `RPT_GENERATE_*`.
+- **Runs in:** **M3** (runtime) · **BUILD** (lifecycle, gates log-only per A17) · **EXECUTION** (engine-authority); human-confirmation gate live on the two `MUTATES_TRUTH` steps (commit, apply).
+- **Depends on:** A16 (B2), A17 (B3), A18 (B4) — all landed.
+- **Exit:** a thin vertical slice runs the full contract path against PE-HIGH, gates logging only.
+- **B5** (Project container M4, G-18) is additive — may run parallel or after B6.
+- Carried (non-blocking): gate doc-reconcile · schema-count · O1/O2/O3 · G-10 fold · G-07/B7.
 
 ---
 
