@@ -69,6 +69,7 @@ Per `PHASE_B_BUILD_WORKFLOW_PLAN.md` B4. Define the runtime mode model, keeping 
 - **Runtime modes:** `M1 Advisory` · `M2 Delivery Plan` · `M3 WP Mode` · `M4 Project Mode`; AI latitude shrinks M1→M3; every output stamped with mode + provenance.
 - **Label discipline (G-17):** `M2 Delivery Plan` ≠ `M3 WP-Tasks Planning` ≠ the **CQV plan** (a document output, not a mode) — keep all three distinct in copy.
 - **Exit:** mode model documented with both axes, runtime M1–M4, per-mode latitude, disambiguated labels.
+- **Pre-decided (captured 2026-06-19, post-checkpoint):** **D-12** staging amend — free in STAGED, post-commit append-only (add / `WP_UPDATE_TASK_FIELDS` / tombstone), no in-place insert; **D-13** M4 container has **no truth gates** (projection over `SELECTED_WP_SET`; per-WP gates run in M3; sole control = explicit selected-set scope-bound). See gap assessment D-12/D-13.
 - Carried (non-blocking): gate doc-reconcile · schema-count · O1/O2/O3/O4 · G-10 fold · G-07/B7.
 
 ---

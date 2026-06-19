@@ -14,6 +14,10 @@ Format follows the spirit of [Keep a Changelog](https://keepachangelog.com/). Ve
 ### Decided (owner-finalized 2026-06-16)
 - All 20 gaps + 11 decisions finalized (owner: Amr). Key resolutions: **D-01** separate build repo; **D-02/G-14** we edit pack pre-freeze then owner freezes (freeze-readiness = Phase A); **G-16** rename pack envelope `M1/M2`→`DESIGN/EXECUTION`, runtime modes `M1 Advisory · M2 Delivery Plan · M3 WP Mode · M4 Project Mode`; **G-04** full thin vertical skeleton; **G-06/D-03** file/git store, lock-aware write path, multi-user deferred; **G-09/D-09** `co-design/` dir; **D-08** LLM interface locked (model TBD); **G-07** crypto identity deferred but carried as a named plan milestone. (G-12 + G-20 = one CI/harness workstream.)
 
+### Decided (2026-06-19 — B4/B5 pre-decisions, post-0.11)
+- **D-12 (staging editability):** free amend while STAGED (no gate beyond GATE-Commit); post-commit changes append-only only — add new task / `WP_UPDATE_TASK_FIELDS` / tombstone; no in-place insert; IDs immutable, never reused (A04_2 §4).
+- **D-13 (M4 container gates):** the Project container has **no truth-mutation gates** (extends D-10/D-11, projection-only); the consolidated plan is a projection over `SELECTED_WP_SET` with per-WP gates running inside each WP (M3); sole control is the scope-bound — explicit selected set, `ALL_WPS` refused/bounded (R3).
+
 ### Phase A — COMPLETE (shipped build-prep-0.4 → 0.8)
 - A1 mode rename (G-16) · A2 integrity tooling (G-19) · A3 vector/CI harness (G-12+G-20) · A4 standards/anchor reconciliation + `PUBLIC_EXCERPT` cleanup (G-10/G-11) · pre-A5 freeze-state cleanup · A5 freeze. **Pack frozen at v1.0.1 (`0ec3060`).**
 
