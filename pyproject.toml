@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "valor-build"
-version = "0.0.0"
+version = "0.1.0"
 description = "VALOR build layer (Phase B): AI layer + runtime + UI, built against the frozen VALOR Architecture Pack v1.0.1 as a dependency."
 requires-python = ">=3.11"
 # D-04: Python + JSON Schema draft-07. Validation at every engine boundary.

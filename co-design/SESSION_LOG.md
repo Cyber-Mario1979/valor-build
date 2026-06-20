@@ -29,6 +29,51 @@
 
 ---
 
+## Session 13 — 2026-06-20  (**B6 LANDED** — walking skeleton: full vertical `create→stage→commit→plan→apply→draft→finalize→export` runs end-to-end against PE-HIGH, BUILD mode gates log-only; first runnable build `0.1.0`)
+**Focus:** No pack edits — pack stays **frozen at v1.0.1 (`0ec3060`)**. Executed Session 12's NEXT agenda (B6): built the first runnable build layer in `src/valor_build/` and proved the full contract path runs end-to-end against PE-HIGH, thin but full vertical, in **M3 · BUILD · EXECUTION**, gates logging only. Lands as code + tests + `docs/B6_Walking_Skeleton.md`. **B6 COMPLETE; B5 (Project container, M4) is next.** Co-design / build on our side; the owner commits/pushes.
+**Read this session:** Session 12 **NEXT** block (the B6 agenda), `PHASE_B_BUILD_WORKFLOW_PLAN.md` (B6 slice), `A16`/`A17`/`A18`, the existing `src/valor_build` scaffold + `pyproject.toml`, and the live pack at `0ec3060` — `CONTRACT_REGISTRY_v1.0.1.yaml` (7 contracts / 39 actions), the envelope + path result schemas (`contract_request/response`, `work_package`, `task`, `staged_task_set`, `plan_proposal`, `doc_draft_result`, `doc_artifact_result`, `workbook_export_result`, the nested `document_metadata` / `rpt_artifact_metadata`), and the PE-HIGH trio (`PS/TP/PROF-PE-HIGH`).
+
+### B6 — what landed (grounded against the pinned pack)
+- **The dispatch spine (A16 §5), executable:** request-envelope validate → resolve action in the frozen registry → runtime-mode reachability (A18) → gate eval (A17, log-only in BUILD) → human-confirmation gate (always live) → handler → result-schema validate → response-envelope validate → output stamp + audit. Fail-closed at every boundary; a validation miss is a refusal.
+- **File WP store (A16 §3):** append-only `ledger.jsonl`, tombstoning, never-reused ID ledger, **single `commit_truth` chokepoint** under an advisory lock; non-truth staging area for STAGE_ONLY + artifact intermediates. Git-commit-per-write is the production hook (default no-op).
+- **Five canonical gates (A17):** BUILD logs `WOULD_BLOCK` and proceeds; LIVE raises `GateBlocked`. The slice exercises all five (Stage/Commit/Plan/Apply/Export) exactly once.
+- **M1–M4 reachability (A18):** classes do the enforcing — M3 reaches all; M1 refuses a MUTATES_TRUTH action before dispatch.
+- **D-08 LLM interface:** versioned/hashed prompt asset, schema-constrained JSON, 1-retry-then-escalate, audited every call (prompt_version + input/output hashes). Deterministic stub model (O1); a real model is the only seam.
+- **A3 lesson carried:** schema validator rewrites relative `valor://` `$ref`s to absolute `$id`s at load via a `referencing` registry (`urljoin` won't resolve a custom scheme). Confirmed by validating the nested `../objects/...` refs.
+- **PE-HIGH data read from the pack** (not invented): one root task `PEH-VMP-CYCLE`, duration resolved from `PROF-PE-HIGH` (`VMP_CYCLE_DUR` = 20 WORKING_DAYS), CAL-WORKWEEK scheduling.
+- **R5 guard:** every BUILD output carries `PRODUCT_TESTING_ONLY`.
+
+### Decisions made
+- **None new.** B6 is execution of fixed architecture (A16/A17/A18); no D-series decisions opened. Owner pushback rule observed: doc/code states both halves of each rule.
+
+### Checks (fresh-clone, container path)
+- Registry parsed at the pin: 7 contracts / 39 actions / classes {READ_ONLY 14, VALIDATE_ONLY 10, MUTATES_TRUTH 8, GENERATES_ARTIFACT 6, STAGE_ONLY 1} — matches A16 §5.
+- `python -m valor_build.skeleton` runs green: 8/8 steps ok, 5 gates PASS, 5 confirmations, 1 AI call (ACCEPT), 8 output stamps, 19 audit records, `all_ok=True`.
+- Pack resolves by **walk-up** with no env var set (owner runs it without `VALOR_PACK_ROOT`).
+- `pytest tests/test_walking_skeleton.py` — **10 passed** (full slice · five gates logged · committed truth persisted · unmet gate proceeds in BUILD / halts in LIVE · confirmation-No leaves truth unmutated · BUILD stamps testing-only · IDs never reused · M1 can't reach MUTATES_TRUTH · AI call audited with hashes).
+- Schema count observed: 52 on disk, **51 carry `$id`** (`documents/index.json` has none) — consistent with the carried 52-vs-51 note.
+
+### Artifacts produced (this session, for the owner to land)
+- **`src/valor_build/`** — NEW build layer (12 modules): `pack_access`, `engine/{schemas,registry,audit,store,gates,domain,dispatch,handlers}`, `modes/runtime`, `ai/interface`, `skeleton` — *via installer.*
+- **`tests/test_walking_skeleton.py`** — NEW (replaces the trivial `tests/test_scaffold.py`, which is deleted) — *via installer.*
+- **`docs/B6_Walking_Skeleton.md`** — NEW implementation note — *via installer.*
+- **`src/valor_build/__init__.py`** + **`pyproject.toml`** — version **0.0.0 → 0.1.0** (first runnable) — *via installer.*
+- This **`SESSION_LOG.md`** Session 13 entry + refreshed **NEXT** block — *via installer.*
+- **`CHANGELOG.md`** entry **build-prep-0.13** + `[Unreleased]` Phase B flipped *B6-next* → **B6 done, B5 next** — *via installer.*
+- All repo changes delivered as one gitignored **`apply_session13.py`** (LF-deterministic, idempotent, fail-closed, base64-embedded). No non-repo (knowledge/UI) artifacts this session.
+
+### Open questions raised / carried (all non-blocking for B5)
+- Carried: gate doc-reconcile (6→5 shorthand in G-02 / Phase-B plan / older SESSION_LOG) · schema-count 52/51 · O1 model · O2 UI · O3 multi-user · G-10 fold · G-07/B7 crypto-identity.
+
+### NEXT SESSION — **Phase B / B5: Project container (M4 projection over `SELECTED_WP_SET`)**  (G-18 — additive on the M3 slice B6 proved)  [START FRESH CHAT]
+Per `PHASE_B_BUILD_WORKFLOW_PLAN.md` B5. Build the Project container as an **M4** projection that composes a `SELECTED_WP_SET`:
+- **Scope:** projection-only, **no truth-mutation gates** (D-13); each member WP runs its own M3 path (the B6 slice) for its truth; sole control is the **scope-bound** — explicit selected set, `ALL_WPS` refused/bounded (R3).
+- **Reuse:** the dispatch spine, store, audit, and stamps from B6 unchanged; add consolidated `RPT_GENERATE_*` over the set + composition metadata.
+- **Label discipline (G-17):** the M4 container is the *Delivery Plan* mode surface — keep it distinct from M3 *WP-tasks planning* and from any *CQV plan* document.
+- **Depends on:** B6 (landed). **Exit:** an M4 projection composes ≥2 PE-HIGH WPs read-only, no truth gates, scope-bound enforced.
+
+---
+
 ## Session 12 — 2026-06-19  (**B4 LANDED** — runtime mode model A18: M1–M4, two axes kept separate, latitude ladder, label discipline)
 **Focus:** No pack edits — pack stays **frozen at v1.0.1 (`0ec3060`)**. Executed Session 11's NEXT agenda (B4): defined the runtime mode model — **M1 Advisory · M2 Delivery Plan · M3 WP Mode · M4 Project Mode** — each mapped to real action classes from the registry, with the runtime axis kept strictly separate from the pack's `DESIGN`/`EXECUTION` engine axis and the `ARCH`/`BUILD` lifecycle axis (R1). Spec landed as `docs/A18_Runtime_Mode_Model.md`. **B4 COMPLETE; B6 (walking skeleton) is next — B5 available in parallel.** Co-design / doc-only on our side; the owner commits/pushes.
 **Read this session:** Session 11 **NEXT** block (the B4 agenda) + the D-12/D-13 pre-decided note, `PHASE_B_BUILD_WORKFLOW_PLAN.md` (B4 slice), `VALOR_Build_Readiness_Gap_Assessment_v0.3.md` (G-16/G-17, D-10/D-11), `A16`/`A17`, and the live pack at `0ec3060` — `CONTRACT_REGISTRY_v1.0.1.yaml` (7 contracts / 39 actions, per-action `side_effect` + `allowed_modes`), `A04_1` (gates + state labels).

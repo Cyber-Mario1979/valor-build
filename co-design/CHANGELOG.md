@@ -26,7 +26,32 @@ Format follows the spirit of [Keep a Changelog](https://keepachangelog.com/). Ve
 - **B2 COMPLETE (build-prep-0.10):** runtime spec A16 written (G-01).
 - **B3 COMPLETE (build-prep-0.11):** BUILD mode spec A17 — gates log-only (G-02/D-07).
 - **B4 COMPLETE (build-prep-0.12):** runtime mode model A18 — M1–M4, two axes, latitude ladder, labels (G-16/G-17).
-- **B6 next:** full-vertical walking skeleton (G-04, PE-HIGH) — B4 unblocks it; **B5** Project container (G-18) available in parallel · Identity-integration milestone (G-07) carried.
+- **B6 COMPLETE (build-prep-0.13):** walking skeleton — full vertical `create→stage→commit→plan→apply→draft→finalize→export` runs end-to-end against PE-HIGH in M3·BUILD·EXECUTION, gates log-only; first runnable build `0.1.0` (G-04).
+- **B5 next:** Project container (M4 projection over `SELECTED_WP_SET`, G-18) — additive on the M3 slice B6 proved · Identity-integration milestone (G-07) carried.
+
+---
+
+## [build-prep-0.13] — 2026-06-20 — B6: walking skeleton (PE-HIGH, first runnable `0.1.0`)
+
+First Phase-B **code** shipment. **No pack edits** — pack stays **frozen at v1.0.1 (`0ec3060`)**. Lands the B6 deliverable: the first runnable build layer, proving the full contract path runs end-to-end against PE-HIGH, thin but full vertical, in **M3 · BUILD · EXECUTION** with gates logging only. Co-design / build by Mervat; owner (Amr) committed/pushed. Logged in SESSION_LOG Session 13.
+
+### Why
+Session 12 landed B4 (A18) and pointed NEXT at B6 — **G-04**. A16/A17/A18 fixed the architecture (runtime target, BUILD mode, mode model); B6 is the first code that makes those three execute against the frozen pack and the live PE-HIGH domain.
+
+### Added (build repo — via installer)
+- **`src/valor_build/`** — the build layer (12 modules):
+  - `pack_access` (locate read-only pack) · `engine/schemas` (fail-closed validator; absolute-`$id` `referencing` registry with the A3 `valor://` ref rewrite) · `engine/registry` (typed action map) · `engine/audit` (single channel + sha256) · `engine/store` (append-only ledger, tombstoning, never-reused IDs, single lock-aware `commit_truth` chokepoint) · `engine/gates` (five canonical gates; BUILD log-only / LIVE halt) · `modes/runtime` (M1–M4 reachability) · `ai/interface` (D-08 locked: hashed prompt, schema-constrained JSON, 1-retry-then-escalate) · `engine/domain` (reads PE-HIGH trio + CAL-WORKWEEK) · `engine/dispatch` (the A16 §5 spine) · `engine/handlers` (8 thin schema-valid handlers) · `skeleton` (runnable slice).
+- **`tests/test_walking_skeleton.py`** — 10 invariant tests (full slice · five gates logged · committed truth persisted · unmet gate proceeds in BUILD / halts in LIVE · confirmation-No leaves truth unmutated · BUILD testing-only stamps · IDs never reused · M1 can't reach MUTATES_TRUTH · AI call audited with hashes).
+- **`docs/B6_Walking_Skeleton.md`** — implementation note (real-vs-stubbed scope, module map, action→gate table).
+
+### Changed
+- **`src/valor_build/__init__.py`** + **`pyproject.toml`** — version **0.0.0 → 0.1.0** (first runnable milestone).
+
+### Removed
+- **`tests/test_scaffold.py`** — the trivial `__version__ == "0.0.0"` placeholder, superseded by the real suite.
+
+### Verification
+- `python -m valor_build.skeleton`: 8/8 steps ok, 5 gates PASS, 5 confirmations, 1 AI call (ACCEPT), 8 output stamps, 19 audit records, `all_ok=True`. Pack resolves by walk-up with no env var. `pytest` — 10 passed. Installer: LF-deterministic, idempotent, fail-closed, pack untouched, gitignored.
 
 ---
 
