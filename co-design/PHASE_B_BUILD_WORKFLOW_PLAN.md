@@ -67,9 +67,16 @@ Prove the path runs end-to-end, thin but **full vertical**.
 - **Exit:** a thin vertical slice runs the full contract path against PE-HIGH, gates logging only.
 
 ### B7 — Identity-integration milestone *(G-07 — owner condition: preserve, don't forget)*
-- **Now:** implement role-context capture + audit logging (the soft-control stub already specified in A10 §7 / A09 §6.2).
-- **Deferred but NAMED:** cryptographic identity must appear as an explicit, named milestone in the end-to-end plan and integrate at the point the pack already names. This is an owner condition — it must not silently disappear.
+- **Now:** implement role-context capture + audit logging (the soft-control stub already specified in A10 §7 / A09 §6.2). Per **D-14** this is *soft only*: capture the declared role (audited), stamp it on every output, and warn-with-ack a sensitive (`confirm:true`) action that carries no declared role. **No** role→action authority map and **no** real-authority validation at this stage.
+- **Deferred but NAMED — `M-IDENTITY` (cryptographic identity):** cryptographic identity must appear as an explicit, named milestone in the end-to-end plan and integrate at the point the pack already names. This is an owner condition — it must not silently disappear.
 - **Exit:** soft controls live; crypto-identity milestone present and named in the plan timeline.
+
+#### `M-IDENTITY` — Cryptographic identity (NAMED, deferred — do not drop)
+The post-Phase-B identity milestone, carried per the owner condition (G-07) and D-14:
+- **Integration seam (pack-named):** A09 §6.2 — *"the system stores who approved, but it does not validate real-world authority unless integrated with identity systems."* That clause is the plug-in point; A10 §3.2/§7 is the deferral it lifts.
+- **Schema seam (already cut):** the frozen `contract_request` `actor` block permits `{role, name}` with `additionalProperties:true`, so a verified `actor.id` validates **today** — M-IDENTITY fills `actor.id` and flips `identity_verified` true with **zero pack/schema change**.
+- **Scope:** verified actor identity replacing/augmenting declared-role soft controls; this is where a role→action authority map (D-14 Option B) and real-authority validation land, if adopted.
+- **Status:** named, not scheduled. Sequenced after Phase-B exit; not an exit blocker.
 
 ---
 
@@ -94,7 +101,7 @@ B5 is additive and may run parallel to or after B6. B7 runs as a thread across t
 4. **B4:** mode model documented — ARCH/BUILD × DESIGN/EXECUTION, runtime M1–M4, per-mode latitude, disambiguated labels.
 5. **B5:** M4 Project container = projection-only over SELECTED_WP_SET; no truth ownership.
 6. **B6:** full thin vertical PE-HIGH slice runs stage→commit→plan→doc→export, gates log-only.
-7. **B7:** soft-control identity live; crypto-identity milestone named in the plan.
+7. **B7:** soft-control identity live (D-14, Option A — capture + stamp + warn-with-ack, no authority map); cryptographic-identity milestone **`M-IDENTITY`** named in the plan timeline (integrates at A09 §6.2; fills the already-cut `actor.id` seam).
 
 ---
 

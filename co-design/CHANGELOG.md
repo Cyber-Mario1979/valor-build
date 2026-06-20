@@ -28,7 +28,37 @@ Format follows the spirit of [Keep a Changelog](https://keepachangelog.com/). Ve
 - **B4 COMPLETE (build-prep-0.12):** runtime mode model A18 — M1–M4, two axes, latitude ladder, labels (G-16/G-17).
 - **B6 COMPLETE (build-prep-0.13):** walking skeleton — full vertical `create→stage→commit→plan→apply→draft→finalize→export` runs end-to-end against PE-HIGH in M3·BUILD·EXECUTION, gates log-only; first runnable build `0.1.0` (G-04).
 - **B5 COMPLETE (build-prep-0.14):** M4 Project container — projection over `SELECTED_WP_SET`, no truth gates (D-13), scope-bound as sole control (R3); composes ≥2 committed PE-HIGH WPs read-only into one consolidated status report; build `0.2.0` (G-18). Additive on the B6 spine.
-- **B7 next:** Identity-integration milestone (G-07) — the last Phase-B exit item: soft-control role-context capture + audit logging now; cryptographic-identity milestone named (not dropped) in the plan timeline.
+- **B7 COMPLETE (build-prep-0.15):** identity soft controls — declared role-context capture (audited), role stamped on every output, warn-with-ack for sensitive (`confirm:true`) actions with no declared role (D-14, Option A); cryptographic identity **named** as `M-IDENTITY` (integrates at A09 §6.2; fills the already-cut `actor.id` seam); build `0.3.0` (G-07). No pack edits.
+- **Phase B at EXIT:** all seven exit criteria met (B1–B7). No further mandated B-item; next track is owner's call (`M-IDENTITY` / O1 model / O2 UI / housekeeping).
+
+---
+
+## [build-prep-0.15] — 2026-06-20 — B7: identity soft controls + named `M-IDENTITY` (Phase B EXIT, build `0.3.0`)
+
+Seventh Phase-B shipment, **third code** shipment, and the **last Phase-B exit item**. **No pack edits** — pack stays **frozen at v1.0.1 (`0ec3060`)**. Lands B7: the A10 §7 / A09 §6.2 soft-control identity stub, and the **named** cryptographic-identity milestone (`M-IDENTITY`). Co-design / build by Mervat; owner (Amr) commits/pushes. Logged in SESSION_LOG Session 15.
+
+### Why
+Session 14 landed B5 and pointed NEXT at B7 — **G-07**, the owner's "preserve, don't forget" condition. B7 makes the declared-role soft control explicit and tested *now*, and pins the deferred crypto milestone into the plan so it can't silently disappear.
+
+### Decided — D-14 (Option A)
+The A10 §7 inconsistent-role behaviour is a stated *"policy choice."* Owner approved **Option A**: capture + log + warn-with-ack, **no** role→action authority map. Faithful to A10 §7 verbatim, stays *soft*, smallest surface, and does not preclude a role map / verified identity later (the `requires_role_ack` predicate is the one-function seam). The map + real-authority validation fold into `M-IDENTITY`. Full A-vs-B rationale in `docs/B7_Identity_Integration.md`; decision row in the gap assessment (D-14).
+
+### Added
+- `src/valor_build/engine/identity.py` — `RoleContext{role, name?, id?}` (`id` reserved for crypto), `RoleContext.capture` (audited `identity_context`, `identity_verified:false`), `actor_block` (A09 §7.1 shape, backward-compatible), `requires_role_ack` (warn-with-ack predicate).
+- `tests/test_identity.py` — 9 B7 invariants (capture audited · role stamped on every output · `actor.id` validates through the frozen envelope · warn-with-ack refuses unacknowledged / proceeds when acknowledged · declared role never warns).
+- `docs/B7_Identity_Integration.md` — implementation note + D-14 rationale + `M-IDENTITY` milestone.
+
+### Changed
+- `src/valor_build/engine/dispatch.py` — capture role-context at entry; envelope `actor` via `actor_block`; **`actor_role` stamped on every output** (A10 §7); warn-with-ack soft control before the confirmation prompt; `StepRequest.actor_name` (optional).
+- `co-design/PHASE_B_BUILD_WORKFLOW_PLAN.md` — B7 slice expanded; `M-IDENTITY` named (integration + schema seams); exit #7 updated.
+- `co-design/VALOR_Build_Readiness_Gap_Assessment_v0.3.md` — Table 2 row **D-14**; change-log line (doc stays v0.3, growing).
+- Version **0.2.0 → 0.3.0** (`__init__.py`, `pyproject.toml`).
+
+### Verified (fresh clone)
+- `pytest` → **32 passed** (10 B6 + 13 B5 unchanged + 9 B7). Both drivers green; kind-filtered audit counts unchanged; every output stamp carries `actor_role`. `actor.id` validates through the frozen `contract_request` envelope (no pack/schema change needed for `M-IDENTITY`).
+
+### Delivery
+- One gitignored **`apply_session15.py`** (LF-deterministic, idempotent, fail-closed, base64-embedded; pack never touched). No non-repo (knowledge/UI) artifacts.
 
 ---
 

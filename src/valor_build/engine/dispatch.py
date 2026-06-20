@@ -23,6 +23,7 @@ from dataclasses import dataclass, field
 from typing import Callable
 
 from .audit import AuditLog, canonical_hash, now_utc
+from .identity import RoleContext, actor_block, requires_role_ack
 from .gates import GateBlocked, GateVerdict, Lifecycle, evaluate_gate
 from .registry import ActionSpec, ContractRegistry
 from .schemas import SchemaRegistry, SchemaValidationError
@@ -41,6 +42,7 @@ class StepRequest:
     lifecycle: Lifecycle
     engine_mode: str                  # "EXECUTION" | "DESIGN" (envelope mode field)
     actor_role: str
+    actor_name: str | None = None     # optional declared name (A09 §7.1 actor.name)
     state: str = ""                   # resulting state for the output stamp
     gate: str | None = None           # canonical gate this step maps to, or None
     entry_condition_met: bool = True
@@ -81,6 +83,13 @@ class Dispatcher:
         action_id = f"{spec.action_type}:{uuid.uuid4().hex[:12]}"
         wp_id = req.target.get("wp_id", "")
 
+        # 0. Capture the declared role context (soft control, A10 §7 / A09 §7.1).
+        #    One audited identity_context record per action; identity stays unverified.
+        RoleContext.capture(
+            self.audit, req.actor_role, name=req.actor_name,
+            action_type=spec.action_type, wp_id=wp_id,
+        )
+
         # 1. Build + validate the request envelope (fail-closed).
         request_env = {
             "contract": spec.contract_id,
@@ -88,7 +97,7 @@ class Dispatcher:
             "action_id": action_id,
             "action_type": spec.action_type,
             "mode": req.engine_mode,
-            "actor": {"role": req.actor_role},
+            "actor": actor_block(req.actor_role, req.actor_name),
             "target": req.target,
             "payload": req.payload,
             "context": {"timestamp_utc": now_utc()},
@@ -120,6 +129,27 @@ class Dispatcher:
 
         # 4. Human-confirmation gate — ALWAYS on, BUILD included (A17 §4).
         if spec.confirm:
+            # 4a. Soft control (A10 §7 / D-14): a sensitive action with no declared
+            #     role context warns and requires explicit acknowledgement. Stays soft
+            #     — no role->action authority map; that arrives with M-IDENTITY.
+            if requires_role_ack(spec.confirm, req.actor_role):
+                ack_message = (
+                    f"No role context declared for {spec.action_type} on "
+                    f"{wp_id or '<no wp>'} — acknowledge proceeding as an undeclared role? (Yes/No)"
+                )
+                acknowledged = self.confirm(ack_message)
+                self.audit.emit(
+                    "role_consistency_warning", action_type=spec.action_type, wp_id=wp_id,
+                    declared_role=req.actor_role or "", acknowledged=acknowledged,
+                    message=ack_message,
+                )
+                if not acknowledged:
+                    return self._refuse(
+                        spec, action_id, "ROLE_CONTEXT_UNACKNOWLEDGED",
+                        "sensitive action without declared role context; acknowledgement declined",
+                        verdict,
+                    )
+
             message = f"Confirm {spec.action_type} on {wp_id or '<no wp>'} (Yes/No)"
             accepted = self.confirm(message)
             self.audit.emit(
@@ -171,9 +201,12 @@ class Dispatcher:
             "engine_authority": req.engine_mode,
             "state": req.state,
             "wp_id": req.target.get("wp_id", ""),
+            "actor_role": req.actor_role,            # A10 §7: log the declared role on outputs
             "result_hash": canonical_hash(result),
             **req.provenance,
         }
+        if req.actor_name:
+            stamp["actor_name"] = req.actor_name
         if req.lifecycle is Lifecycle.BUILD:
             stamp["testing_only"] = True
             stamp["testing_only_stamp"] = PRODUCT_TESTING_ONLY
