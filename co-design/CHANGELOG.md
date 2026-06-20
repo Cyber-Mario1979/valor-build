@@ -31,6 +31,27 @@ Format follows the spirit of [Keep a Changelog](https://keepachangelog.com/). Ve
 - **B7 COMPLETE (build-prep-0.15):** identity soft controls — declared role-context capture (audited), role stamped on every output, warn-with-ack for sensitive (`confirm:true`) actions with no declared role (D-14, Option A); cryptographic identity **named** as `M-IDENTITY` (integrates at A09 §6.2; fills the already-cut `actor.id` seam); build `0.3.0` (G-07). No pack edits.
 - **Phase B at EXIT:** all seven exit criteria met (B1–B7). No further mandated B-item; next track is owner's call (`M-IDENTITY` / O1 model / O2 UI / housekeeping).
 
+### Phase C — planning (under owner review)
+- **Phase C plan DRAFTED (build-prep-0.16):** `co-design/PHASE_C_BUILD_OUT_PLAN.md` — Build-Out & Hardening, five work items (C1 hygiene · C2 `M-IDENTITY` · C3 O1 model · C4 O2 UI · C5 O3 concurrency [scope decision]). **DRAFT, under owner review — not approved;** four open decisions OC-1…OC-4. No code; no pack edits.
+
+---
+
+## [build-prep-0.16] — 2026-06-20 — Phase C plan drafted (under owner review; doc-only)
+
+Planning shipment — **no code, no pack edits**, build version unchanged at `0.3.0`. With Phase B at EXIT, lands a structured **Phase C — Build-Out & Hardening Plan** so the post-exit work has a real home. The plan is a **DRAFT for owner review — not approved.** Co-design / doc by Mervat; owner (Amr) commits/pushes. Logged in SESSION_LOG Session 16.
+
+### Why
+Phase B exited with four candidate tracks and no organizing plan. Owner called that out — a backlog is not a plan. Phase A and B each had a structured plan doc; Phase C now does too.
+
+### Added
+- `co-design/PHASE_C_BUILD_OUT_PLAN.md` — five sequenced work items (C1 hygiene/reconciliation · C2 `M-IDENTITY` verified identity · C3 O1 model / Layer-2 · C4 O2 UI / Layer-3 · C5 O3 multi-user concurrency [scope decision]); dependency diagram; exit criteria; open items OC-1…OC-4; risks R1/R2/R5 carried + R6/R7/R8 new.
+
+### Status
+- **DRAFT, under owner review.** Four scoping decisions open (OC-1 C5 scope · OC-2 D-14 Option-B map in C2 · OC-3 C2/C3 ordering · OC-4 pack v1.1.0 batch trigger). Next session opens on owner feedback; no build work until approved.
+
+### Delivery
+- One gitignored **`apply_session16.py`** (LF-deterministic, idempotent, fail-closed, `--dry-run` supported; pack never touched). No non-repo (knowledge/UI) artifacts.
+
 ---
 
 ## [build-prep-0.15] — 2026-06-20 — B7: identity soft controls + named `M-IDENTITY` (Phase B EXIT, build `0.3.0`)

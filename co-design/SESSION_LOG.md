@@ -8,7 +8,7 @@
 - The assistant must treat the most recent **NEXT SESSION** block as the agenda for the following session.
 - This is a *working/continuity* document, not a governed pack asset. It carries no manifest hash — and per the audit (G-03/D-01) it must live **outside** the hashed pack root.
 
-> **Note (consolidated 2026-06-18):** Sessions 1–8 were merged into this single file from per-session fragments, newest-at-top. No gaps; nothing reconstructed from memory — every entry is the verbatim session record. Only the most recent **NEXT SESSION** block (now Session 15) is the live agenda; earlier ones are historical.
+> **Note (consolidated 2026-06-18):** Sessions 1–8 were merged into this single file from per-session fragments, newest-at-top. No gaps; nothing reconstructed from memory — every entry is the verbatim session record. Only the most recent **NEXT SESSION** block (now Session 16) is the live agenda; earlier ones are historical.
 
 ---
 
@@ -26,6 +26,44 @@
 1. <action>
 2. <action>
 ```
+
+---
+
+## Session 16 — 2026-06-20  (**Phase C plan DRAFTED — under owner review**; no code, no pack edits)
+**Focus:** With Phase B at EXIT (B1–B7 landed), produced a structured **Phase C — Build-Out & Hardening Plan** so the post-exit work has a real home rather than four loose tracks. **Doc-only**, no code, pack untouched at `0ec3060`. The plan is a **DRAFT for owner review** — **not approved**; four scoping decisions (OC-1…OC-4) are open. Owner (Amr) decision this session: **land the draft + record it as under review**; the next `SS` opens on the owner's feedback/questions about the Phase C plan. Co-design / doc by Mervat; owner commits/pushes.
+**Read this session:** `PHASE_B_BUILD_WORKFLOW_PLAN.md` (format + Open Items O1–O4, risks R1–R5), `VALOR_Build_Readiness_Gap_Assessment_v0.3.md` (D-03/D-08/D-14, G-07/G-18), the Session 14/15 carried open items, and `.gitattributes` (LF discipline).
+
+### What landed
+- **`co-design/PHASE_C_BUILD_OUT_PLAN.md`** — NEW draft, mirroring the Phase-A/B plan format: sequenced work items, dependency diagram, exit criteria, open items, risks. Five work items:
+  - **C1 — Hygiene & reconciliation batch** (gate doc-reconcile 6→5 · schema-count 52/51 · O4 CRLF env cure + KS-newlines re-homed to a v1.1.0 batch · G-10 fold · M4-reach tighten). *Do first; clean baseline.*
+  - **C2 — `M-IDENTITY`** (verified `actor.id` + authority validation at A09 §6.2; D-14 Option-B role-map decision). *Builds on B7.*
+  - **C3 — O1 model** (realize Layer 2: select a model behind the locked D-08 interface; determinism + audit intact).
+  - **C4 — O2 UI** (Layer 3 multi-screen + Document Factory + M4 projection surface). *Depends on C2 + C3.*
+  - **C5 — O3 multi-user concurrency** (the D-03 deferred extension). *Flagged as a SCOPE DECISION — owner named four tracks; C5 is the carried fifth, not assumed in.*
+- **Risks carried/added:** R1/R2/R5 carried; R6 (identity scope creep), R7 (UI implying unearned authority), R8 (pack v1.1.0 re-opens governance) added.
+
+### Decisions made
+- **None new (no D-series).** This is a planning deliverable, not an architecture decision. The four open scoping items are **OC-1…OC-4** (below), pending owner input next session.
+
+### Open items raised (owner — to resolve next session)
+- **OC-1:** C5 (multi-user concurrency / O3) in Phase C, or held as a named post-C extension?
+- **OC-2:** Adopt the D-14 Option-B role→action authority map inside C2, or stay soft and defer the map further?
+- **OC-3:** C2/C3 — parallel, or sequence one first?
+- **OC-4:** When to open the pack **v1.1.0** batch (C1's KS-newlines + any C2 schema needs re-enter Phase-A freeze/manifest discipline).
+- Carried (non-blocking): the C1 hygiene set itself · `M-IDENTITY` named · O1/O2/O3 now homed in C2/C3/C5.
+
+### Artifacts produced (this session, for the owner to land)
+- **`co-design/PHASE_C_BUILD_OUT_PLAN.md`** — NEW (draft, under review) — *via installer.*
+- This **`SESSION_LOG.md`** Session 16 entry + refreshed **NEXT** block — *via installer.*
+- **`CHANGELOG.md`** entry **build-prep-0.16** (Phase C plan drafted, under review) — *via installer.*
+- All repo changes delivered as one gitignored **`apply_session16.py`** (LF-deterministic, idempotent, fail-closed, base64-embedded; `--dry-run` supported; pack never touched). No code; build version unchanged at `0.3.0`. No non-repo (knowledge/UI) artifacts.
+
+### NEXT SESSION — **Phase C plan: owner review**  (the agenda is *your feedback*, not new build)  [START FRESH CHAT]
+The Phase C plan (`co-design/PHASE_C_BUILD_OUT_PLAN.md`) is **DRAFT, under owner review** — **not approved**. Next `SS` starts from **Amr's feedback / questions on the Phase C plan**:
+1. Read the draft + the four open decisions **OC-1…OC-4**.
+2. Incorporate the owner's feedback (structure, ordering, scope) and resolve OC-1…OC-4 into the plan.
+3. On approval, flip the plan `Status: DRAFT for owner review` → `APPROVED`, record any decisions as new D-series rows in the gap assessment, and set the first Phase-C work item (likely **C1**) as the following session's agenda.
+- **No build work begins** until the plan is approved. Doc-only until then; pack stays frozen.
 
 ---
 
