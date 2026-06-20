@@ -8,7 +8,7 @@
 - The assistant must treat the most recent **NEXT SESSION** block as the agenda for the following session.
 - This is a *working/continuity* document, not a governed pack asset. It carries no manifest hash — and per the audit (G-03/D-01) it must live **outside** the hashed pack root.
 
-> **Note (consolidated 2026-06-18):** Sessions 1–8 were merged into this single file from per-session fragments, newest-at-top. No gaps; nothing reconstructed from memory — every entry is the verbatim session record. Only the most recent **NEXT SESSION** block (now Session 16) is the live agenda; earlier ones are historical.
+> **Note (consolidated 2026-06-18):** Sessions 1–8 were merged into this single file from per-session fragments, newest-at-top. No gaps; nothing reconstructed from memory — every entry is the verbatim session record. Only the most recent **NEXT SESSION** block (now Session 17) is the live agenda; earlier ones are historical.
 
 ---
 
@@ -29,6 +29,47 @@
 
 ---
 
+## Session 17 — 2026-06-21  (**Phase C APPROVED & restructured** into four Build-Out milestones; **phasing map landed**; Phases D & E stubbed — doc-only, no code, no pack edits)
+**Focus:** Owner (Amr) reviewed the Phase C draft and reshaped it into a full roadmap. Three outcomes, all **doc-only**, pack untouched at `0ec3060`: (1) added the authoritative phase-map **`BUILD_STRATEGY.md` §0 Phasing** + a one-line pointer in every phase-plan header; (2) **rewrote Phase C** from five loose tracks into **four named Build-Out milestones** — Engine 🎉 → AI → UI → Multi-user — with the vertical-slice→full-CQV-coverage gap now explicitly homed; (3) **stubbed Phase D (Stabilization)** and **Phase E (Scope expansion)** so the whole arc is in the plan, milestones named. Co-design / doc by Mervat; owner commits/pushes.
+**Read this session:** the live pack at `0ec3060` — `contracts/CONTRACT_REGISTRY_v1.0.1.yaml` (39 actions / 7 contracts; 23 active + 4 internal + 12 testing-only; side-effect split 14/10/8/6/1), `libraries/preset_library|profile_library|task_pool/` (confirmed **`PS-PE-HIGH` is the only preset** — no other effort classes at v1.0.1); `docs/A16_Runtime_Target_Spec.md` (§4 dynamic registry-load; §5 enforcement-by-pattern), `docs/A18_Runtime_Mode_Model.md` (M1–M4 reach); the landed `PHASE_C_BUILD_OUT_PLAN.md` draft + OC-1…OC-4; `BUILD_STRATEGY.md` (§5–§7, stale header).
+
+### The owner's roadmap (now the plan)
+- **Phase C — Build-Out** (linear, engine-first): **C1 Engine complete 🎉** (hygiene → full action×class×mode coverage over the single `PS-PE-HIGH` preset → identity/login, single-user; **the celebration milestone**) → **C2 AI integration** → **C3 UI** → **C4 Multi-user** (added last, onto the proven single-user base).
+- **Phase D — Stabilization:** heavy owner testing → punch list → fix together → retest → **Reissue**.
+- **Phase E — Scope expansion:** widen CQV scope *beyond* the pack via a deliberate, governed **pack v1.1.0** (this one **touches the pack**; Phase C never does).
+
+### Key correction recorded
+- Earlier framing of "effort classes other than PE-HIGH" was **wrong** — `PS-PE-HIGH` is the **only** preset in v1.0.1. The real breadth gap is **action × side-effect-class × mode coverage** over that single preset (C1 step 2). New presets/effort classes are a **Phase E / pack-v1.1.0** matter, not Phase C.
+
+### Decisions made (owner)
+- **Phase C plan APPROVED** (DRAFT → APPROVED).
+- **OC-1 RESOLVED:** multi-user concurrency (O3) **is in Phase C**, as milestone C4 (last in Build-Out).
+- **OC-3 RESOLVED:** C-series is **linear, engine-first** — identity folds into C1; AI (C2) follows a complete engine.
+- **Identity (`M-IDENTITY`)** folded under **C1 Engine** (backend, not AI/UI), single-user.
+- **Three-chapter split kept** → mapped to **Phases C / D / E**, each its own `PHASE_<X>_*.md` per the open-ended phasing model.
+- **No new D-series** (planning + structure, not architecture decisions).
+
+### Open items carried
+- **OC-2 (OPEN):** adopt the D-14 Option-B role→action authority map inside C1's identity step, or stay soft and defer? (No default to hard RBAC — R6.)
+- **OC-4 → Phase E:** the pack v1.1.0 batch (new scope + carried KS-newline cosmetics) opens in Phase E, not Phase C.
+- C1 hygiene sub-items (gate doc-reconcile · schema-count 52/51 · CRLF env cure · G-10 fold · M4-reach) — worked first inside C1.
+
+### Artifacts produced (this session, for the owner to land — all via installer)
+- **`BUILD_STRATEGY.md`** — NEW `## 0. Phasing` (authoritative phase-map A–E + open-ended note + the two-widening caveat); stale header `scaffold (B1)` → current; §7 repointed off the old Phase-B sequence.
+- **`co-design/PHASE_C_BUILD_OUT_PLAN.md`** — REWRITTEN (DRAFT → APPROVED): four Build-Out milestones, CQV-surface table from the pack, dependency chain, exit = milestones, OC-1/OC-3 resolved, OC-2 open, OC-4 → Phase E.
+- **`co-design/PHASE_D_STABILIZATION_PLAN.md`** — NEW stub (PLANNED): D1 testing → D5 reissue.
+- **`co-design/PHASE_E_SCOPE_EXPANSION_PLAN.md`** — NEW stub (PLANNED): E1 define → E4 build-out new scope; the governed v1.1.0 home.
+- **Pointer line** *Part of VALOR phasing — see `BUILD_STRATEGY.md` §0.* added to PHASE_A / PHASE_B headers (C/D/E carry it natively).
+- This **`SESSION_LOG.md`** Session 17 entry + refreshed **NEXT** block — via installer.
+- **`CHANGELOG.md`** entry **build-prep-0.17** — via installer.
+- All repo changes delivered as one gitignored **`apply_session17.py`** (LF-deterministic, idempotent, fail-closed, base64-embedded; pack never touched). **No code; build version unchanged at `0.3.0`.** No non-repo (knowledge/UI) artifacts this session.
+
+### NEXT SESSION — **Phase C / C1 Engine — step 1: hygiene & reconciliation batch**  (clean baseline before widening)  [START FRESH CHAT]
+Phase C is **APPROVED**; build begins. C1 starts with the **doc/config-only hygiene batch** (clean baseline), then moves to coverage (code), then identity.
+1. Read `PHASE_C_BUILD_OUT_PLAN.md` → C1 step 1; open the carried hygiene items.
+2. Work the hygiene set: gate doc-reconcile (`6→5`) · schema-count `52/51` · `core.autocrlf false` env cure · G-10 fold confirmation · M4-reachability tighten decision. KS-newline cosmetics stay re-homed to the Phase-E v1.1.0 batch.
+3. Land via `apply_session18.py` + commit message; then C1 step 2 (coverage) opens.
+- **Note:** OC-2 (role-map) surfaces when C1 step 3 (identity) is reached — owner decides then.
 ## Session 16 — 2026-06-20  (**Phase C plan DRAFTED — under owner review**; no code, no pack edits)
 **Focus:** With Phase B at EXIT (B1–B7 landed), produced a structured **Phase C — Build-Out & Hardening Plan** so the post-exit work has a real home rather than four loose tracks. **Doc-only**, no code, pack untouched at `0ec3060`. The plan is a **DRAFT for owner review** — **not approved**; four scoping decisions (OC-1…OC-4) are open. Owner (Amr) decision this session: **land the draft + record it as under review**; the next `SS` opens on the owner's feedback/questions about the Phase C plan. Co-design / doc by Mervat; owner commits/pushes.
 **Read this session:** `PHASE_B_BUILD_WORKFLOW_PLAN.md` (format + Open Items O1–O4, risks R1–R5), `VALOR_Build_Readiness_Gap_Assessment_v0.3.md` (D-03/D-08/D-14, G-07/G-18), the Session 14/15 carried open items, and `.gitattributes` (LF discipline).

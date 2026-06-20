@@ -1,5 +1,7 @@
 # Phase B — Build Workflow Plan
 
+*Part of VALOR phasing — see `BUILD_STRATEGY.md` §0.*
+
 **Status:** DRAFT for owner review · **precondition now MET** · **Updated:** 2026-06-18 · **Author:** co-design (Mervat)
 **Baseline:** Gap Assessment v0.3 + Audit Report v1.0 (decisions FINALIZED 2026-06-16, owner: Amr)
 **Precondition:** **Phase A complete** — pack **frozen at v1.0.1** (HEAD **`0ec3060`**, registry `frozen_controlled`; fresh-clone verify 173 / smoke / harness PASS). Phase B builds against that frozen pack as a **versioned dependency**; the pack stays pristine.

@@ -1,8 +1,26 @@
 # BUILD_STRATEGY
 
-**Repo:** `valor-build` (the Phase-B build repo) · **Status:** scaffold (B1) · **Baseline:** frozen pack **v1.0.1 / `0ec3060`**.
+**Repo:** `valor-build` (the build repo) · **Status:** Phase C — Build-Out (APPROVED, active); Phase B at EXIT (build `0.3.0`) · **Baseline:** frozen pack **v1.0.1 / `0ec3060`**.
 
 This document is the seam between the **frozen VALOR Architecture Pack** (Layer 1, the deterministic engine) and the **build layer** we add around it (Layer 2 AI + Layer 3 UI). The pack stays pristine; everything here is additive and external to it.
+
+---
+
+## 0. Phasing
+
+The single authoritative phase-map for the VALOR build. Every phase plan traces back here; if a phase isn't on this map, it isn't real.
+
+| Phase | What it is | Origin | Status | Plan |
+|---|---|---|---|---|
+| **A — Freeze readiness** | Get the pre-freeze pack to a clean, hash-verified freeze. | Gap Assessment v0.3, decision 7 (D-02 / G-14) | ✅ COMPLETE | `co-design/PHASE_A_FREEZE_READINESS_PLAN.md` |
+| **B — Build workflow** | Stand up the build layer around the frozen pack; prove one vertical runs end-to-end. | Post-freeze buildability gaps (G-01…), Gap Assessment v0.3 | ✅ COMPLETE (EXIT, build `0.3.0`) | `co-design/PHASE_B_BUILD_WORKFLOW_PLAN.md` |
+| **C — Build-Out** | Widen the proven vertical into a real product: full CQV scope, AI layer, UI, multi-user. | Phase B EXIT — one slice proven; breadth + the two stubbed layers unbuilt | ACTIVE (APPROVED 2026-06-21) | `co-design/PHASE_C_BUILD_OUT_PLAN.md` |
+| **D — Stabilization** | Heavy testing → punch list → fixes → retest → reissue. | Phase C complete — a built product needs hardening before scope grows | PLANNED | `co-design/PHASE_D_STABILIZATION_PLAN.md` |
+| **E — Scope expansion** | Widen CQV scope *beyond* what the pack defines today — via a deliberate, governed pack **v1.1.0**. | Phase D stable — only widen scope on a proven, stable base | PLANNED | `co-design/PHASE_E_SCOPE_EXPANSION_PLAN.md` |
+
+**Phasing is open-ended.** Phases F, G… are added as coherent work emerges, each with its own `PHASE_<X>_*.md`, its origin stated here, tracing back to this map. **A → B → C → D → E is the sequence so far, not a closed set.**
+
+> **Two different "widen the scope" moments — don't conflate them.** Phase C fills out the CQV scope the frozen pack *already defines* (additive, external, **pack never touched**). Phase E widens CQV scope the pack does *not* yet define (**touches the pack** via a controlled v1.1.0 freeze/manifest cycle). Same words, very different governance.
 
 ---
 
@@ -83,6 +101,6 @@ valor-build/
 
 ---
 
-## 7. What's next (Phase B sequence)
+## 7. What's next
 
-B1 (this scaffold) → **B2 `docs/A16_Runtime_Target_Spec.md`** (biggest buildability gap, G-01) → B3 BUILD mode → B4 mode model → B5 Project container (M4) → B6 walking skeleton (PE-HIGH) → B7 identity milestone. Full detail in `co-design/PHASE_B_BUILD_WORKFLOW_PLAN.md`.
+Phase B is **complete** (B1–B7 landed; build `0.3.0`). The active chapter is **Phase C — Build-Out** (C1 Engine 🎉 → C2 AI → C3 UI → C4 Multi-user); full detail in `co-design/PHASE_C_BUILD_OUT_PLAN.md`. For the whole phase-map and what follows (Stabilization, Scope expansion), see **§0 Phasing**.

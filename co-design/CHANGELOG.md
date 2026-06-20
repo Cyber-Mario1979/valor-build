@@ -31,11 +31,29 @@ Format follows the spirit of [Keep a Changelog](https://keepachangelog.com/). Ve
 - **B7 COMPLETE (build-prep-0.15):** identity soft controls — declared role-context capture (audited), role stamped on every output, warn-with-ack for sensitive (`confirm:true`) actions with no declared role (D-14, Option A); cryptographic identity **named** as `M-IDENTITY` (integrates at A09 §6.2; fills the already-cut `actor.id` seam); build `0.3.0` (G-07). No pack edits.
 - **Phase B at EXIT:** all seven exit criteria met (B1–B7). No further mandated B-item; next track is owner's call (`M-IDENTITY` / O1 model / O2 UI / housekeeping).
 
-### Phase C — planning (under owner review)
-- **Phase C plan DRAFTED (build-prep-0.16):** `co-design/PHASE_C_BUILD_OUT_PLAN.md` — Build-Out & Hardening, five work items (C1 hygiene · C2 `M-IDENTITY` · C3 O1 model · C4 O2 UI · C5 O3 concurrency [scope decision]). **DRAFT, under owner review — not approved;** four open decisions OC-1…OC-4. No code; no pack edits.
+### Phase C — APPROVED & restructured (build-prep-0.17)
+- **Phase C plan APPROVED + reshaped (build-prep-0.17):** `co-design/PHASE_C_BUILD_OUT_PLAN.md` — five loose tracks → **four named Build-Out milestones** (C1 Engine 🎉 → C2 AI → C3 UI → C4 Multi-user), linear/engine-first. Vertical-slice→full-CQV-coverage gap homed in C1 (action×class×mode over the single `PS-PE-HIGH` preset). OC-1 resolved (multi-user in = C4); OC-3 resolved (engine-first); OC-2 open; OC-4 → Phase E. Phasing map landed in `BUILD_STRATEGY.md` §0; Phases D/E stubbed. No code; no pack edits.
 
 ---
 
+## [build-prep-0.17] — 2026-06-21 — Phase C APPROVED & restructured (four Build-Out milestones); phasing map; Phases D & E stubbed (doc-only)
+**Doc-only; no code; build unchanged at `0.3.0`; pack untouched at `0ec3060`.**
+
+### Added
+- **`BUILD_STRATEGY.md` §0 Phasing** — the single authoritative phase-map (A complete · B complete · **C Build-Out approved** · D Stabilization planned · E Scope-expansion planned), the open-ended-phasing note, and the **two-widening caveat** (Phase C fills out pack scope / Phase E widens beyond it via a governed v1.1.0).
+- **`co-design/PHASE_D_STABILIZATION_PLAN.md`** (PLANNED) — D1 heavy testing → D2 punch list → D3 fix → D4 retest → D5 reissue.
+- **`co-design/PHASE_E_SCOPE_EXPANSION_PLAN.md`** (PLANNED) — E1 define new scope → E2 open pack v1.1.0 → E3 freeze/verify → E4 build-out; the governed-pack-edit home.
+- *Part of VALOR phasing — see `BUILD_STRATEGY.md` §0.* pointer line in every phase-plan header.
+
+### Changed
+- **`co-design/PHASE_C_BUILD_OUT_PLAN.md`** — DRAFT → **APPROVED**; retitled **Build-Out**; five loose tracks → **four named milestones** (C1 Engine 🎉 → C2 AI → C3 UI → C4 Multi-user), linear/engine-first. Vertical-slice→full-CQV-coverage gap now explicitly homed in C1 (action × side-effect-class × mode coverage over the single `PS-PE-HIGH` preset; **27 active actions / 7 contracts / 5 classes / 4 modes**, from the registry at `0ec3060`). Identity (`M-IDENTITY`) folded into C1.
+- **`BUILD_STRATEGY.md`** — stale header `Status: scaffold (B1)` → current Phase-C status; §7 repointed off the completed Phase-B sequence to §0 + the Phase-C plan.
+
+### Decided (owner, 2026-06-21)
+- Phase C **APPROVED**. **OC-1** resolved (multi-user **in** Phase C = C4). **OC-3** resolved (linear, engine-first). Identity folded under C1 Engine (backend). Three-chapter split mapped to **Phases C / D / E**. **OC-2** (D-14 role-map) stays **open**; **OC-4** (pack v1.1.0) deferred to **Phase E**. No new D-series.
+
+### Correction
+- "Effort classes other than PE-HIGH" was incorrect — `PS-PE-HIGH` is the **only** preset at v1.0.1. The breadth gap is action×class×mode coverage over that single preset; new presets are a Phase-E/v1.1.0 matter.
 ## [build-prep-0.16] — 2026-06-20 — Phase C plan drafted (under owner review; doc-only)
 
 Planning shipment — **no code, no pack edits**, build version unchanged at `0.3.0`. With Phase B at EXIT, lands a structured **Phase C — Build-Out & Hardening Plan** so the post-exit work has a real home. The plan is a **DRAFT for owner review — not approved.** Co-design / doc by Mervat; owner (Amr) commits/pushes. Logged in SESSION_LOG Session 16.
