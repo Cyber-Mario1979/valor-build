@@ -64,12 +64,14 @@
 - **`CHANGELOG.md`** entry **build-prep-0.17** — via installer.
 - All repo changes delivered as one gitignored **`apply_session17.py`** (LF-deterministic, idempotent, fail-closed, base64-embedded; pack never touched). **No code; build version unchanged at `0.3.0`.** No non-repo (knowledge/UI) artifacts this session.
 
-### NEXT SESSION — **Phase C / C1 Engine — step 1: hygiene & reconciliation batch**  (clean baseline before widening)  [START FRESH CHAT]
-Phase C is **APPROVED**; build begins. C1 starts with the **doc/config-only hygiene batch** (clean baseline), then moves to coverage (code), then identity.
-1. Read `PHASE_C_BUILD_OUT_PLAN.md` → C1 step 1; open the carried hygiene items.
-2. Work the hygiene set: gate doc-reconcile (`6→5`) · schema-count `52/51` · `core.autocrlf false` env cure · G-10 fold confirmation · M4-reachability tighten decision. KS-newline cosmetics stay re-homed to the Phase-E v1.1.0 batch.
-3. Land via `apply_session18.py` + commit message; then C1 step 2 (coverage) opens.
-- **Note:** OC-2 (role-map) surfaces when C1 step 3 (identity) is reached — owner decides then.
+### NEXT SESSION — **Phase C / C1 Engine · Step 1: Hygiene & reconciliation batch**  (doc/config-only — clean baseline before any code)  [START FRESH CHAT]
+Phase C is **APPROVED**; build begins with the hygiene batch. Five atomic steps; **two need Amr up front (steps 3 & 5)**. Lands via `apply_session18.py` + commit message.
+1. **Gate doc-reconcile 6→5** — replace the stale six-gate shorthand with the five canonical gates (Stage/Commit/Plan/Apply/Export) in G-02 / Phase-B plan / older SESSION_LOG. *Doc-only.*
+2. **Schema-count 52/51** — close the delta: 52 on disk, 51 carry `$id`; the one without is `schemas/documents/index.json` (an index manifest, no `$id` by design). Reconcile the cited count. *Doc-only.*
+3. **CRLF cure [AMR]** — Amr runs `git config core.autocrlf false` locally (the doc half is already in BUILD_STRATEGY §5); then record it APPLIED and close O4(a).
+4. **G-10 fold confirmation** — verify nothing governed was left unfolded into STD-CQV-BASE; write the confirmation and close. If a genuinely-new requirement surfaces → **STOP**, surface to owner (a new requirement is a decision, not a tidy-up). *Doc-only.*
+5. **M4-reachability [AMR]** — owner decides: **(A) keep** READ_ONLY + projection-RPT (current) or **(B) tighten** to pure READ_ONLY. One-line flip either way; both consistent with D-13.
+- On batch completion: all carried hygiene non-blockers CLOSED (KS trailing-newlines stay re-homed to the Phase-E v1.1.0 batch). **NEXT becomes C1 step 2 — coverage (CODE):** drive all **27 active actions / 7 contracts** across all **5 side-effect classes** and all **4 modes** over the single `PS-PE-HIGH` preset, via the A16 §4 dynamic registry-load path.
 ## Session 16 — 2026-06-20  (**Phase C plan DRAFTED — under owner review**; no code, no pack edits)
 **Focus:** With Phase B at EXIT (B1–B7 landed), produced a structured **Phase C — Build-Out & Hardening Plan** so the post-exit work has a real home rather than four loose tracks. **Doc-only**, no code, pack untouched at `0ec3060`. The plan is a **DRAFT for owner review** — **not approved**; four scoping decisions (OC-1…OC-4) are open. Owner (Amr) decision this session: **land the draft + record it as under review**; the next `SS` opens on the owner's feedback/questions about the Phase C plan. Co-design / doc by Mervat; owner commits/pushes.
 **Read this session:** `PHASE_B_BUILD_WORKFLOW_PLAN.md` (format + Open Items O1–O4, risks R1–R5), `VALOR_Build_Readiness_Gap_Assessment_v0.3.md` (D-03/D-08/D-14, G-07/G-18), the Session 14/15 carried open items, and `.gitattributes` (LF discipline).
