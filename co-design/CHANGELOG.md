@@ -27,7 +27,42 @@ Format follows the spirit of [Keep a Changelog](https://keepachangelog.com/). Ve
 - **B3 COMPLETE (build-prep-0.11):** BUILD mode spec A17 — gates log-only (G-02/D-07).
 - **B4 COMPLETE (build-prep-0.12):** runtime mode model A18 — M1–M4, two axes, latitude ladder, labels (G-16/G-17).
 - **B6 COMPLETE (build-prep-0.13):** walking skeleton — full vertical `create→stage→commit→plan→apply→draft→finalize→export` runs end-to-end against PE-HIGH in M3·BUILD·EXECUTION, gates log-only; first runnable build `0.1.0` (G-04).
-- **B5 next:** Project container (M4 projection over `SELECTED_WP_SET`, G-18) — additive on the M3 slice B6 proved · Identity-integration milestone (G-07) carried.
+- **B5 COMPLETE (build-prep-0.14):** M4 Project container — projection over `SELECTED_WP_SET`, no truth gates (D-13), scope-bound as sole control (R3); composes ≥2 committed PE-HIGH WPs read-only into one consolidated status report; build `0.2.0` (G-18). Additive on the B6 spine.
+- **B7 next:** Identity-integration milestone (G-07) — the last Phase-B exit item: soft-control role-context capture + audit logging now; cryptographic-identity milestone named (not dropped) in the plan timeline.
+
+---
+
+## [build-prep-0.14] — 2026-06-20 — B5: M4 Project container (projection over `SELECTED_WP_SET`, build `0.2.0`)
+
+Sixth Phase-B shipment, **second code** shipment. **No pack edits** — pack stays **frozen at v1.0.1 (`0ec3060`)**. Lands the B5 deliverable: the **M4 Project container** — a projection that composes a `SELECTED_WP_SET` of committed PE-HIGH WPs into one consolidated, projection-only status report, with **no truth gates** and the **scope-bound as its sole control**. Additive on the B6 spine. Co-design / build by Mervat; owner (Amr) commits/pushes. Logged in SESSION_LOG Session 14.
+
+### Why
+Session 13 landed B6 (walking skeleton) and pointed NEXT at B5 — **G-18 / D-10 / D-11 / D-13**. B6 proved the per-WP M3 truth path runs; B5 adds the M4 layer **above** the WP that composes several of them without owning their truth.
+
+### Added (build repo — via installer)
+- **`src/valor_build/engine/project.py`** — `ProjectContainer` (scope-bound `compose`; deterministic consolidated `build_status_report` over the set), `ScopeBoundError`, the `ALL_WPS` sentinel + `SELECTED_WP_SET` vocabulary. Owns no truth; reads committed snapshots read-only.
+- **`src/valor_build/project_skeleton.py`** — the B5 driver: runs the B6 slice for ≥2 PE-HIGH WPs (each its own M3 path) into a shared store + single audit channel, then composes the container and dispatches the M4 projection. Runnable via `python -m valor_build.project_skeleton`.
+- **`tests/test_project_container.py`** — 13 B5 invariant tests (compose ≥2 WPs · projection read-only · M4 mutates no truth · no truth gates in M4 · scope-bound refuses ALL_WPS / empty / uncommitted / duplicates · M4 reaches projection RPT only / never the truth path · projection validates with 9 sections · BUILD testing-only stamp · members keep their own committed truth).
+- **`docs/B5_Project_Container.md`** — implementation note (no-truth-ownership model, scope-bound table, grounded report shape, M4-reachability reconcile).
+
+### Changed (build repo — via installer)
+- **`src/valor_build/modes/runtime.py`** — M4 reachability reconciled to A18 §2: `READ_ONLY` + the projection-only subset of `GENERATES_ARTIFACT` (RPT projection contract `VALOR-contract-orch-rpt`); the truth path (`MUTATES_TRUTH`/`STAGE_ONLY`) stays unreachable. `is_reachable`/`require_reachable` gained an optional `contract_id` (backward-compatible). **Code↔doc reconcile, not a new policy — D-13 preserved.**
+- **`src/valor_build/engine/dispatch.py`** — passes `spec.contract_id` into the reachability check (1 line).
+- **`src/valor_build/skeleton.py`** — optional shared `audit` parameter so a project run is one audit channel (1 line; B6 behaviour unchanged).
+- **`src/valor_build/__init__.py`** + **`pyproject.toml`** — version **0.1.0 → 0.2.0**.
+- **`co-design/SESSION_LOG.md`** — Session 14 entry + refreshed NEXT block (→ B7).
+- **`co-design/CHANGELOG.md`** — this entry; `[Unreleased]` Phase B flipped B5-next → **B5 done, B7 next**.
+
+### Decided
+- **None new.** B5 executes fixed architecture (A18 §2 + D-10/D-11/D-13). The M4-reachability change is a reconcile to A18 §2, flagged for owner awareness; owner may tighten to pure `READ_ONLY` (one-line flip).
+
+### Notes / carried
+- New (flag): M4-reachability encoding — owner may tighten. Carried: gate doc-reconcile (6→5) · schema-count 52/51 · O1/O2/O3/O4 · G-10 fold.
+- **B7 (identity-integration milestone, G-07) is the last Phase-B exit item.**
+- Installer (`apply_session14.py`) verified on a fresh clone: 11 files written, idempotent on re-run, fail-closed, 0 CR bytes, pack untouched, gitignored. Not committed.
+
+### Verification
+- `python -m valor_build.project_skeleton`: 2 × M3 slices (8/8 steps) + 1 × M4 projection — `projection_only=True`, `mutates_wp_truth=False`; 39 audit records, gates=10 all from M3 members (zero from M4), 17 stamps, 2 AI calls. `pytest` — **23 passed** (10 B6 + 13 B5). B6 skeleton regression green.
 
 ---
 

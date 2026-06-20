@@ -96,7 +96,8 @@ class Dispatcher:
         self.schemas.validate(request_env, "schemas/contracts/contract_request.schema.json")
 
         # 2. Runtime-mode reachability (A18 §2). M3 reaches all; M1/M2/M4 bounded.
-        require_reachable(req.runtime_mode, spec.side_effect)
+        #    M4 takes a contract-aware exception for projection-only RPT artifacts.
+        require_reachable(req.runtime_mode, spec.side_effect, spec.contract_id)
 
         # 3. Gate evaluation (A17). BUILD: log-only; LIVE: GateBlocked halts.
         verdict = None

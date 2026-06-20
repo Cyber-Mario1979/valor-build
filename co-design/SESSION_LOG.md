@@ -8,7 +8,7 @@
 - The assistant must treat the most recent **NEXT SESSION** block as the agenda for the following session.
 - This is a *working/continuity* document, not a governed pack asset. It carries no manifest hash — and per the audit (G-03/D-01) it must live **outside** the hashed pack root.
 
-> **Note (consolidated 2026-06-18):** Sessions 1–8 were merged into this single file from per-session fragments, newest-at-top. No gaps; nothing reconstructed from memory — every entry is the verbatim session record. Only the most recent **NEXT SESSION** block (now Session 12) is the live agenda; earlier ones are historical.
+> **Note (consolidated 2026-06-18):** Sessions 1–8 were merged into this single file from per-session fragments, newest-at-top. No gaps; nothing reconstructed from memory — every entry is the verbatim session record. Only the most recent **NEXT SESSION** block (now Session 14) is the live agenda; earlier ones are historical.
 
 ---
 
@@ -26,6 +26,56 @@
 1. <action>
 2. <action>
 ```
+
+---
+
+## Session 14 — 2026-06-20  (**B5 LANDED** — M4 Project container: projection over `SELECTED_WP_SET`, no truth gates, scope-bound as sole control; build `0.2.0`)
+**Focus:** No pack edits — pack stays **frozen at v1.0.1 (`0ec3060`)**. Executed Session 13's NEXT agenda (B5): built the **M4 Project container** as a projection that composes a `SELECTED_WP_SET` of committed PE-HIGH WPs and emits one consolidated, projection-only status report over the set — **no truth-mutation gates** (D-13), each member WP keeps its own M3 truth path, sole control = the scope-bound (R3). Additive on the B6 spine (dispatch/store/audit/stamps reused unchanged). Lands as code + tests + `docs/B5_Project_Container.md`, version `0.1.0 → 0.2.0`. **B5 COMPLETE; B7 (identity-integration milestone, G-07) is next — the last Phase-B exit item.** Co-design / build on our side; the owner commits/pushes.
+**Read this session:** Session 13 **NEXT** block (the B5 agenda), `PHASE_B_BUILD_WORKFLOW_PLAN.md` (B5 slice + exit criteria), `VALOR_Build_Readiness_Gap_Assessment_v0.3.md` (G-18, D-10/D-11/D-13), `A18_Runtime_Mode_Model.md` (§2 M4 row), the existing B6 build layer (`src/valor_build/`), and the live pack at `0ec3060` — `CONTRACT_REGISTRY_v1.0.1.yaml`, the RPT contract `VALOR-contract-orch-rpt` (`projection_policy`, `target_scope_policy`), and the `report_result` / `rpt_artifact_metadata` / `contract_request` / `contract_response` schemas.
+
+### B5 — what landed (grounded against the pinned pack)
+- **M4 Project container (`engine/project.py`):** `ProjectContainer.compose(project_id, selected, store)` reads each member's committed snapshot **read-only** and composes them; it owns no truth (D-10/D-11). The consolidated artifact is `RPT_GENERATE_STATUS_REPORT` (`GENERATES_ARTIFACT`, `confirm:false`) under the pack's projection contract (`projection_policy.mutates_wp_truth:false`) — built deterministically (no AI call), `projection_only:true` / `mutates_wp_truth:false`, the nine canonical `report_sections`, validated against `report_result.schema.json`.
+- **Scope-bound = sole control (R3 / D-13):** `compose` refuses `ALL_WPS` (bare sentinel or in-set; out of freeze scope per the RPT `target_scope_policy`), empty sets, duplicates, and any member without a committed snapshot or that is tombstoned. There are **no gates** on the M4 step (`gate=None`) and no confirmation.
+- **Driver (`project_skeleton.py`):** runs the B6 slice for ≥2 PE-HIGH WPs (each its own M3 truth path) into a shared store + single audit channel, then composes the container and dispatches the M4 projection. `python -m valor_build.project_skeleton`.
+- **Reuse:** dispatch spine, store, audit, output stamps, and the per-WP M3 slice all reused unchanged. B6 behaviour is untouched (10/10 B6 tests still pass).
+- **R5 guard:** the M4 output carries `PRODUCT_TESTING_ONLY` (BUILD stamp).
+
+### Finding resolved this session — M4 reachability reconciled to A18 §2
+The B4/B6 placeholder encoded M4 reachability as `{READ_ONLY}` only. A18 §2 explicitly names M4's real actions as *"consolidated `RPT_GENERATE_*` over the set"* — which are `GENERATES_ARTIFACT`, not `READ_ONLY`. So `{READ_ONLY}` was too tight to satisfy A18 §2 once M4 was actually exercised. Reconciled `modes/runtime.py` with a **contract-aware** rule: **M4 reaches `READ_ONLY` plus the projection-only subset of `GENERATES_ARTIFACT` (the RPT projection contract `VALOR-contract-orch-rpt`)** — still **never** the truth path (`MUTATES_TRUTH`/`STAGE_ONLY`) and **not** the per-WP `PLAN_*`/`DOC_*` artifacts. This is a **code↔doc reconcile to A18 §2, not a new policy** — D-13 is preserved exactly. A stricter encoding (pure `READ_ONLY` M4, consolidation outside the spine) is a one-line flip if the owner prefers it. **[OPEN — owner may tighten]**
+
+### Decisions made
+- **None new (no D-series opened).** B5 executes fixed architecture (A18 §2 + D-10/D-11/D-13). The M4-reachability change is a code↔doc reconcile to A18 §2, flagged above for owner awareness, not a new decision.
+
+### Checks (fresh-clone, container path)
+- Pack pinned + initialised at `0ec3060`; submodule clean. RPT contract verified: `projection_policy.mutates_wp_truth:false`; `target_scope_policy` = {SINGLE_WP, SELECTED_WP_SET}, `ALL_WPS` excluded from freeze.
+- `python -m valor_build.project_skeleton`: 2 × M3 slices (8/8 steps) + 1 × M4 projection — `projection_only=True`, `mutates_wp_truth=False`; 39 audit records, **gates=10 all from the M3 members (zero from M4)**, 17 stamps, 2 AI calls.
+- `pytest` — **23 passed** (10 B6 unchanged + 13 B5: compose ≥2 WPs · projection read-only · M4 mutates no truth (ledger `TRUTH_TRANSITION` unchanged) · no truth gates in M4 · scope-bound refuses ALL_WPS/empty/uncommitted/duplicates · M4 reaches projection RPT only / never the truth path · projection validates with 9 sections · BUILD testing-only stamp · members keep their own committed truth).
+- `python -m valor_build.skeleton` (B6 regression): green, `all_ok=True`, unchanged 19 audit records.
+
+### Artifacts produced (this session, for the owner to land)
+- **`src/valor_build/engine/project.py`** — NEW (M4 container + scope-bound + consolidated report) — *via installer.*
+- **`src/valor_build/project_skeleton.py`** — NEW (B5 driver) — *via installer.*
+- **`tests/test_project_container.py`** — NEW (13 B5 invariant tests) — *via installer.*
+- **`docs/B5_Project_Container.md`** — NEW implementation note — *via installer.*
+- **`src/valor_build/modes/runtime.py`** — M4 reachability reconciled to A18 §2 — *via installer.*
+- **`src/valor_build/engine/dispatch.py`** — passes `contract_id` to the reachability check (1 line) — *via installer.*
+- **`src/valor_build/skeleton.py`** — optional shared `audit` param (1 line; backward-compatible) — *via installer.*
+- **`src/valor_build/__init__.py`** + **`pyproject.toml`** — version **0.1.0 → 0.2.0** — *via installer.*
+- This **`SESSION_LOG.md`** Session 14 entry + refreshed **NEXT** block — *via installer.*
+- **`CHANGELOG.md`** entry **build-prep-0.14** + `[Unreleased]` Phase B flipped *B5-next* → **B5 done, B7 next** — *via installer.*
+- All repo changes delivered as one gitignored **`apply_session14.py`** (LF-deterministic, idempotent, fail-closed, base64-embedded). No non-repo (knowledge/UI) artifacts this session.
+
+### Open questions raised / carried (all non-blocking for B7)
+- **New (this session):** M4-reachability encoding — reconciled to A18 §2 (READ_ONLY + projection-only RPT); owner may tighten to pure READ_ONLY. Doc/code already consistent; flagged for awareness only.
+- Carried: gate doc-reconcile (6→5 shorthand in G-02 / Phase-B plan / older log) · schema-count 52/51 · O1 model · O2 UI (incl. M4 projection presentation surface) · O3 multi-user · O4 (CRLF env cure + 3 KS trailing newlines) · G-10 fold.
+
+### NEXT SESSION — **Phase B / B7: Identity-integration milestone**  (G-07 — owner condition: preserve, don't forget)  [START FRESH CHAT]
+Per `PHASE_B_BUILD_WORKFLOW_PLAN.md` B7 — the **last Phase-B exit item**.
+- **Now (soft controls):** formalise role-context capture + audit logging. The outputs already stamp `actor_role` and the dispatch audits confirmations; B7 makes the A10 §7 / A09 §6.2 soft-control stub explicit (declared-role capture, no crypto), and the request envelope's `actor.role` is the seam.
+- **Deferred but NAMED:** the **cryptographic-identity milestone** must appear as an explicit, named milestone in the end-to-end plan and integrate at the point the pack already names — it must not silently disappear (owner condition).
+- **Exit:** soft controls live + audited; crypto-identity milestone present and named in the plan timeline.
+- **Depends on:** B6 (landed) — outputs/audit already carry `actor_role`. Additive; no pack edit.
+- Carried (non-blocking): M4-reachability tighten option · gate doc-reconcile · schema-count · O1/O2/O3/O4 · G-10 fold.
 
 ---
 

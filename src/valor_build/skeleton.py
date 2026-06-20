@@ -59,10 +59,11 @@ def run_walking_skeleton(
     confirm_provider: Callable[[str], bool] = auto_yes,
     audit_path: Path | None = None,
     pack_root: Path | None = None,
+    audit: AuditLog | None = None,
 ) -> SkeletonResult:
     registry = ContractRegistry(pack_root)
     schemas = SchemaRegistry(pack_root)
-    audit = AuditLog(audit_path)
+    audit = audit or AuditLog(audit_path)
     store = WPStore(Path(store_root))
     domain = PEHighDomain.load(pack_root)
     ai = LLMInterface(schemas, audit)
