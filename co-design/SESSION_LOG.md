@@ -29,6 +29,44 @@
 
 ---
 
+## Session 18 — 2026-06-21  (**Phase C / C1 Engine · Step 1 — hygiene & reconciliation batch LANDED**; doc/config-only, no code, no pack edits)
+**Focus:** First Phase-C work item — the C1 hygiene batch that establishes a clean baseline *before* any engine code. Five atomic steps, all doc/config-only; pack untouched at `0ec3060`, build unchanged at `0.3.0`. Two steps needed the owner (Amr) up front (CRLF cure + M4-reach); both resolved this session. Co-design / doc by Mervat; owner commits/pushes.
+**Read this session:** the live pack at `0ec3060` — `A04_1` §4.1 (the five canonical gates), `STD-CQV-BASE_v1.0.1.yaml` (16 `CQV-REQ`, 1:1 with 16 `MAP-CQV-REQ`), the two add-on bundles + `source_to_internal_requirements` mapping, `schemas/documents/index.json` (the non-schema index manifest), and `CONTRACT_REGISTRY_v1.0.1.yaml` (39 actions / 7 contracts / 5 side-effect classes); plus the build-repo docs G-02 / Phase-B plan B3 / SESSION_LOG / A16 §schema-dialect.
+
+### What landed (all doc/config — repo only, via installer)
+1. **Gate doc-reconcile 6→5.** Replaced the stale `Stage/Validate/Commit/Apply/Finalize/Close` six-shorthand with the five canonical gates **Stage/Commit/Plan/Apply/Export** (`A04_1` §4.1) in the **G-02** row (gap assessment) and the **B3** slice (Phase-B plan). The six-form had dropped the real **Plan** + **Export** gates and folded in three non-gates (Validate = the fail-closed validation posture; Finalize = DOC `DRAFT→FINAL`, `A04_5`; Close = architecture closure, `A13`). In **SESSION_LOG** the one stale-as-fact mention (in a superseded NEXT block) carries a **bracketed inline correction** — original words preserved (verbatim-log discipline), correction appended in place.
+2. **Schema-count 52/51 clarified.** No numeric error: **52** `.json` under `schemas/` at `0ec3060`, **51** carry `$id` (draft-07 schemas), and the 52nd — `schemas/documents/index.json` — is a **non-schema index manifest** (`count:9, items:[...]`, no `$id` by design). Clarifying note added at **A16 §schema-dialect**. "51 schemas" and "52 files" are each correct in context; no count changed; the pack file is frozen and untouched.
+3. **CRLF cure [AMR] — APPLIED.** Owner ran `git config core.autocrlf false` in the working tree (doc half already in `BUILD_STRATEGY` §5). **O4(a) CLOSED.** (O4(b) — KS trailing-newlines — stays re-homed to the Phase-E pack-v1.1.0 batch; pack-touching, not this session.)
+4. **G-10 fold — CONFIRMED & CLOSED.** Verified nothing governed was left unfolded: `STD-CQV-BASE` ships **16** governed `CQV-REQ` (1:1 with **16** `MAP-CQV-REQ` mapping entries); CSV/cleanroom are governed via **add-on-bundle triggers** (CQV-REQ-011 → BND-CSV-ADDON, CQV-REQ-012 → BND-CLEANROOM-ADDON); equipment-domain (MGT/PEQ/CUTIL/BUTIL/CAL) is correctly homed in task pools/profiles, **not** standards. The seven S1-drafted standards were co-design drafts, never committed (A4 finding). **No genuinely-new governed requirement surfaced → no STOP.**
+5. **M4-reachability [AMR] — (A) KEEP.** Owner chose to keep `READ_ONLY` + projection-RPT (current B5 behaviour); not tightened to pure READ_ONLY. Consistent with D-13; one-line reversible. Recorded against the D-13 row. (Owner's broader M4 scope idea parked as a named item — a real design conversation, not this flip.)
+
+### Decisions made
+- **None new (no D-series).** Hygiene/reconciliation only. M4-reach (A) and the G-10 fold confirmation are recorded against existing rows (D-13, G-10).
+
+### Checks (fresh-clone, container path)
+- Pack pinned + initialised at `0ec3060`; submodule clean, **untouched**. Gate set verified against `A04_1` §4.1; STD-CQV-BASE requirement↔mapping = 16↔16; `schemas/documents/index.json` confirmed non-schema (no `$id`). Registry tally: 39 actions = 23 `ACTIVE_FROZEN` + 4 `ACTIVE_INTERNAL_FROZEN` + 12 `TESTING_ONLY_FROZEN`; 7 contracts; 5 side-effect classes (READ_ONLY 14 · VALIDATE_ONLY 10 · MUTATES_TRUTH 8 · GENERATES_ARTIFACT 6 · STAGE_ONLY 1).
+
+### Artifacts produced (this session, for the owner to land — all via installer)
+- **`co-design/VALOR_Build_Readiness_Gap_Assessment_v0.3.md`** — G-02 gate shorthand 6→5; G-10 fold-confirmed tag; D-13 M4-reach (A) tag. Doc stays v0.3 (growing).
+- **`co-design/PHASE_B_BUILD_WORKFLOW_PLAN.md`** — B3 gate shorthand 6→5; O4(a) marked APPLIED.
+- **`docs/A16_Runtime_Target_Spec.md`** — §schema-dialect schema-count clarification (52 files / 51 schemas / 1 index manifest).
+- This **`SESSION_LOG.md`** Session 18 entry + refreshed **NEXT** block; S17 NEXT marked superseded; the line-380 bracketed correction.
+- **`CHANGELOG.md`** entry **build-prep-0.18**.
+- All repo changes delivered as one gitignored **`apply_session18.py`** (LF-deterministic, idempotent, fail-closed, base64-embedded; pack never touched). **No code; build unchanged at `0.3.0`.** No non-repo (knowledge/UI) artifacts this session.
+
+### Open questions raised / carried
+- **None new.** C1 hygiene batch CLOSED. Carried (non-blocking): **OC-2** (D-14 Option-B role→action map — decide inside C1's identity step) · **OC-4 → Phase E** (pack v1.1.0 batch + O4(b) KS trailing-newlines) · **M4-broader-scope** (owner's parked idea) · O1 model (→ C2) · O2 UI (→ C3).
+
+### NEXT SESSION — **Phase C / C1 Engine · Step 2 — Coverage (CODE)**  [START FRESH CHAT]
+Hygiene baseline is clean. This is the **first code of Phase C**: drive the engine across the full CQV surface over the single `PS-PE-HIGH` preset, via the A16 §4 dynamic registry-load path.
+1. **Coverage matrix** (read from `CONTRACT_REGISTRY_v1.0.1.yaml` @ `0ec3060`, no hard-coding): the **27 active actions** (= 23 `ACTIVE_FROZEN` + 4 `ACTIVE_INTERNAL_FROZEN`; the 12 `TESTING_ONLY_FROZEN` are a separate class) × **7 contracts** × all **5 side-effect classes** × all **4 runtime modes (M1–M4)** — every cell either exercised or explicitly N/A with a recorded reason.
+2. Reuse the B6 dispatch/store/audit/stamp spine + the B5 M4 projection; extend handlers to cover the actions the walking skeleton didn't touch.
+3. Gates stay **log-only** (BUILD mode, A17); BUILD outputs keep `PRODUCT_TESTING_ONLY` (R5); identity soft-controls (B7) intact; M4 stays READ_ONLY + projection-RPT (D-13 / M4-reach A).
+4. **Exit:** the full action×class×mode matrix runs green over `PS-PE-HIGH`; a coverage report is committed; no pack edits.
+- Lands via `apply_session19.py` + commit message. **This is the first code milestone toward C1 Engine 🎉.**
+
+---
+
 ## Session 17 — 2026-06-21  (**Phase C APPROVED & restructured** into four Build-Out milestones; **phasing map landed**; Phases D & E stubbed — doc-only, no code, no pack edits)
 **Focus:** Owner (Amr) reviewed the Phase C draft and reshaped it into a full roadmap. Three outcomes, all **doc-only**, pack untouched at `0ec3060`: (1) added the authoritative phase-map **`BUILD_STRATEGY.md` §0 Phasing** + a one-line pointer in every phase-plan header; (2) **rewrote Phase C** from five loose tracks into **four named Build-Out milestones** — Engine 🎉 → AI → UI → Multi-user — with the vertical-slice→full-CQV-coverage gap now explicitly homed; (3) **stubbed Phase D (Stabilization)** and **Phase E (Scope expansion)** so the whole arc is in the plan, milestones named. Co-design / doc by Mervat; owner commits/pushes.
 **Read this session:** the live pack at `0ec3060` — `contracts/CONTRACT_REGISTRY_v1.0.1.yaml` (39 actions / 7 contracts; 23 active + 4 internal + 12 testing-only; side-effect split 14/10/8/6/1), `libraries/preset_library|profile_library|task_pool/` (confirmed **`PS-PE-HIGH` is the only preset** — no other effort classes at v1.0.1); `docs/A16_Runtime_Target_Spec.md` (§4 dynamic registry-load; §5 enforcement-by-pattern), `docs/A18_Runtime_Mode_Model.md` (M1–M4 reach); the landed `PHASE_C_BUILD_OUT_PLAN.md` draft + OC-1…OC-4; `BUILD_STRATEGY.md` (§5–§7, stale header).
@@ -64,7 +102,7 @@
 - **`CHANGELOG.md`** entry **build-prep-0.17** — via installer.
 - All repo changes delivered as one gitignored **`apply_session17.py`** (LF-deterministic, idempotent, fail-closed, base64-embedded; pack never touched). **No code; build version unchanged at `0.3.0`.** No non-repo (knowledge/UI) artifacts this session.
 
-### NEXT SESSION — **Phase C / C1 Engine · Step 1: Hygiene & reconciliation batch**  (doc/config-only — clean baseline before any code)  [START FRESH CHAT]
+### NEXT SESSION  ▸ superseded by Session 18 — **Phase C / C1 Engine · Step 1: Hygiene & reconciliation batch** (doc/config-only — landed build-prep-0.18)
 Phase C is **APPROVED**; build begins with the hygiene batch. Five atomic steps; **two need Amr up front (steps 3 & 5)**. Lands via `apply_session18.py` + commit message.
 1. **Gate doc-reconcile 6→5** — replace the stale six-gate shorthand with the five canonical gates (Stage/Commit/Plan/Apply/Export) in G-02 / Phase-B plan / older SESSION_LOG. *Doc-only.*
 2. **Schema-count 52/51** — close the delta: 52 on disk, 51 carry `$id`; the one without is `schemas/documents/index.json` (an index manifest, no `$id` by design). Reconcile the cited count. *Doc-only.*
@@ -377,7 +415,7 @@ Resolves the doc-gap flagged earlier: the written docs stated only *"never commi
 - Carried: O4 · **G-10 fold** confirm · O1/O2/O3.
 
 ### NEXT SESSION — **Phase B / B3: BUILD mode (gates log-only / dormant)**  (G-02 / D-07)  [START FRESH CHAT]
-Per `PHASE_B_BUILD_WORKFLOW_PLAN.md` B3. Define a system **BUILD mode** where the pack's gates (Stage/Validate/Commit/Apply/Finalize/Close) are **log-only / dormant** — record the gate result, **never block** development. Document inert-vs-live behavior so the same path can later run gated in production.
+Per `PHASE_B_BUILD_WORKFLOW_PLAN.md` B3. Define a system **BUILD mode** where the pack's gates (Stage/Validate/Commit/Apply/Finalize/Close) *[corrected build-prep-0.18 → the five canonical gates are Stage/Commit/Plan/Apply/Export (A04_1 §4.1); the six-item form dropped Plan+Export and folded in three non-gates — see the correction note above and A17 §4]* are **log-only / dormant** — record the gate result, **never block** development. Document inert-vs-live behavior so the same path can later run gated in production.
 - **Exit:** BUILD mode defined; gate outcomes logged, not enforced, during build.
 - **Builds against:** A16 (B2) — the runtime spec just landed.
 - After B3 → **B4 mode model** (lifecycle ARCH/BUILD axis · engine DESIGN/EXECUTION axis · runtime M1–M4).

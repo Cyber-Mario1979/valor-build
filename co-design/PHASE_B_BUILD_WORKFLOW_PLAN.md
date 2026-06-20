@@ -39,7 +39,7 @@ The pack specifies *what* the system is, never *what it's built on*. A16 fills t
 - **Exit:** A16 specifies engine/AI/UI seams, the store, and the locked AI-call interface concretely enough to build against.
 
 ### B3 — BUILD mode (gates log-only) *(G-02 / D-07)*
-The pack's gates (Stage/Validate/Commit/Apply/Finalize/Close) are mandatory; there is no dormant build mode.
+The pack's gates (Stage/Commit/Plan/Apply/Export) are mandatory; there is no dormant build mode.
 - Define a system **BUILD mode** where gates are **log-only / dormant** — record the gate result, **never block** development.
 - Document inert-vs-live behavior so the same path can later run gated in production.
 - **Exit:** BUILD mode defined; gate outcomes logged, not enforced, during build.
@@ -112,7 +112,7 @@ B5 is additive and may run parallel to or after B6. B7 runs as a thread across t
 - **O1 — LLM model selection (D-08).** Interface is locked; the *model* is a deferred spike. Needs a discussion to scope (candidate models, eval criteria, cost/latency, hosting). Flag for a dedicated session.
 - **O2 — UI (Layer 3).** Multi-screen Document Factory + others — **not designed**. Out of the walking-skeleton scope; needs its own design pass when ready.
 - **O3 — Multi-user concurrency.** Deferred as an extension; the lock-aware path (B2) keeps it from becoming a rewrite. Revisit after the skeleton.
-- **O4 — Carried non-blockers from Phase A.** (a) Owner-env cure for the recurring CRLF gremlin: `git config core.autocrlf false` in the repo. (b) 3 KS schemas with no trailing newline (cosmetic, `i/none`). Neither blocks Phase B; clear opportunistically.
+- **O4 — Carried non-blockers from Phase A.** (a) Owner-env cure for the recurring CRLF gremlin: `git config core.autocrlf false` in the repo. **APPLIED (build-prep-0.18): owner ran it in the working tree; doc half in BUILD_STRATEGY §5; O4(a) CLOSED.** (b) 3 KS schemas with no trailing newline (cosmetic, `i/none`). Neither blocks Phase B; clear opportunistically.
 
 ---
 

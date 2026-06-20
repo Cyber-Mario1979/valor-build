@@ -34,6 +34,29 @@ Format follows the spirit of [Keep a Changelog](https://keepachangelog.com/). Ve
 ### Phase C — APPROVED & restructured (build-prep-0.17)
 - **Phase C plan APPROVED + reshaped (build-prep-0.17):** `co-design/PHASE_C_BUILD_OUT_PLAN.md` — five loose tracks → **four named Build-Out milestones** (C1 Engine 🎉 → C2 AI → C3 UI → C4 Multi-user), linear/engine-first. Vertical-slice→full-CQV-coverage gap homed in C1 (action×class×mode over the single `PS-PE-HIGH` preset). OC-1 resolved (multi-user in = C4); OC-3 resolved (engine-first); OC-2 open; OC-4 → Phase E. Phasing map landed in `BUILD_STRATEGY.md` §0; Phases D/E stubbed. No code; no pack edits.
 
+### Phase C — C1 Step 1 hygiene batch (build-prep-0.18)
+- **C1 hygiene & reconciliation batch landed (build-prep-0.18):** gate shorthand 6→5; schema-count 52/51 clarified; O4(a) CRLF cure APPLIED; G-10 fold CONFIRMED & closed; M4-reach = (A) keep READ_ONLY + projection-RPT (D-13). Doc/config-only; no code; pack untouched. Next: **C1 Step 2 — coverage (CODE)**.
+
+---
+
+## [build-prep-0.18] — 2026-06-21 — Phase C / C1 Step 1: hygiene & reconciliation batch (doc/config-only)
+**Doc/config-only; no code; build unchanged at `0.3.0`; pack untouched at `0ec3060`.**
+
+### Changed
+- **Gate shorthand 6→5** — the stale `Stage/Validate/Commit/Apply/Finalize/Close` six-form (it dropped the real **Plan** + **Export** gates and folded in three non-gates) corrected to the five canonical gates **Stage/Commit/Plan/Apply/Export** (`A04_1` §4.1) in the **G-02** row (gap assessment) and the **B3** slice (Phase-B plan). The one stale-as-fact mention in a superseded `SESSION_LOG` NEXT block carries a bracketed inline correction (verbatim-log discipline preserved).
+- **Schema-count 52/51 clarified** — `A16` §schema-dialect now states: 52 `.json` under `schemas/`, 51 draft-07 schemas with `$id`, and `schemas/documents/index.json` is a non-schema index manifest. No count changed; "51 schemas" / "52 files" are each correct in context.
+
+### Confirmed / closed
+- **O4(a) — CRLF cure APPLIED.** Owner ran `git config core.autocrlf false` in the working tree (doc half already in `BUILD_STRATEGY` §5). O4(a) CLOSED. *(O4(b) KS trailing-newlines remain re-homed to the Phase-E pack-v1.1.0 batch — pack-touching.)*
+- **G-10 fold — CONFIRMED & CLOSED.** Nothing governed left unfolded: `STD-CQV-BASE` = 16 `CQV-REQ` (1:1 with 16 `MAP-CQV-REQ`); CSV/cleanroom governed via add-on-bundle triggers (CQV-REQ-011 → BND-CSV-ADDON, CQV-REQ-012 → BND-CLEANROOM-ADDON); equipment-domain (MGT/PEQ/CUTIL/BUTIL/CAL) homed in task pools/profiles, not standards. The seven S1-drafted standards were co-design drafts, never committed. No genuinely-new governed requirement surfaced.
+
+### Decided (owner, 2026-06-21)
+- **M4-reachability = (A) KEEP** — M4 stays `READ_ONLY` + projection-RPT (current B5 behaviour); not tightened to pure READ_ONLY. Consistent with D-13; one-line reversible. (No new D-series.) Owner's broader M4 scope idea parked as a named item.
+
+### Notes
+- Registry figures reconciled for the next agenda (from `CONTRACT_REGISTRY_v1.0.1.yaml` @ `0ec3060`): **39 actions** = 23 `ACTIVE_FROZEN` + 4 `ACTIVE_INTERNAL_FROZEN` + 12 `TESTING_ONLY_FROZEN`; **7 contracts**; **5 side-effect classes** (READ_ONLY 14 · VALIDATE_ONLY 10 · MUTATES_TRUTH 8 · GENERATES_ARTIFACT 6 · STAGE_ONLY 1). The C1-Step-2 coverage target "27 active" = 23 active + 4 internal.
+- All repo changes via gitignored `apply_session18.py` (LF-deterministic, idempotent, fail-closed, base64-embedded; pack never touched).
+
 ---
 
 ## [build-prep-0.17] — 2026-06-21 — Phase C APPROVED & restructured (four Build-Out milestones); phasing map; Phases D & E stubbed (doc-only)

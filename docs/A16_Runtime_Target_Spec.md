@@ -23,7 +23,7 @@
 ## 2. Stack (D-04)
 
 - **Language:** Python, `requires-python >=3.11` (matches `pyproject.toml`).
-- **Schema dialect:** **JSON Schema draft-07** — the dialect the pack's 52 schema files are authored in. The build layer validates against them; it does not re-author them.
+- **Schema dialect:** **JSON Schema draft-07** — the dialect the pack's schema files are authored in. The build layer validates against them; it does not re-author them. *(Count clarification: 52 `.json` files under `schemas/` at `0ec3060`; 51 are draft-07 schemas carrying `$id`, and `schemas/documents/index.json` is a non-schema index manifest — so "51 schemas" and "52 files" both appear in the docs and are each correct in context.)*
 - **Validation posture: fail-closed at every boundary.** Every cross-boundary call is validated against its declared schema *before* the call is allowed to take effect. A validation miss is a **refusal**, never a warning-and-proceed. This is the contract-validation layer named in D-04 and is the spine of §5.
 - **Envelope:** every contract call carries the pack's standard request/response envelope —
   - request → `schemas/contracts/contract_request.schema.json`
