@@ -40,6 +40,27 @@ Format follows the spirit of [Keep a Changelog](https://keepachangelog.com/). Ve
 ### Phase C — C1 Step 2: coverage matrix (build-prep-0.19)
 - **C1 action×class×mode coverage landed (build-prep-0.19):** the engine now exercises **all 27 active actions** (23 `ACTIVE_FROZEN` + 4 `ACTIVE_INTERNAL_FROZEN`) across the runtime-mode grid over the single `PS-PE-HIGH` preset, on the B6 dispatch/store/audit/stamp spine. New **D-15** (M1 & M2 advisory only — contracted generation is M3-only, consolidation M4; deletes A18's "contracted-but-non-binding" middle category). First Phase C code → build **`0.3.0`→`0.4.0`**; gates log-only (G-02/D-07). No pack edits.
 
+### Phase C — C1 Step 3 prep: OC-2 decided + drift reconcile (build-prep-0.20)
+- **OC-2 RESOLVED + D-15 drift reconciled (build-prep-0.20):** new **D-16** — adopt D-14 Option-B as a **soft, multi-approver** role→action map at `M-IDENTITY` (roles read-only/editor/approver/admin + CQV-engineer task-path-solo; document approval needs approver(s) ≠ author, multi-approver carried at the engine/audit layer with **zero pack change**; soft warn-with-ack now, hard enforcement → C4). Step-0 D-15 drift grep run: 2 doc touch-ups (PHASE_C M2 "proposal" wording; A18 §2 `orch-ps` engine-internal note); rest clean. Doc-only; no code; build unchanged `0.4.0`; pack untouched. Next: **C1 Step 3 — identity (CODE)**.
+
+---
+
+## [build-prep-0.20] — 2026-06-21 — Phase C / C1 Step 3 prep: OC-2 decided + D-15 drift reconcile (doc-only)
+
+Pre-build checkpoint for the identity step — the OC-2 decision settled with the owner and the Step-0 D-15 drift grep run, *before* any identity code. Doc/reconcile-only (the S18 model); no code; build stays `0.4.0`; pack untouched at `0ec3060`. Co-design/doc by Mervat; owner (Amr) commits/pushes.
+
+### Decided
+- **D-16 — adopt D-14 Option B as a SOFT, multi-approver role→action map at `M-IDENTITY` (OC-2 RESOLVED).** Roles: `read-only` / `editor` (no approve) / `approver` / `admin` (all, logged); `CQV engineer` runs the WP truth path solo. Document approval requires **approver(s) ≠ author — multi-approver**, each a separate verified, logged event carried at the engine/audit layer (frozen `doc.actors.approver` is a single string but `actors` is `additionalProperties:true`) → **zero pack/schema change**. Soft warn-with-ack now (single-user ⇒ admin clicks through, logged, never blocking); hard enforcement + true multi-approver → multi-user (C4). Propose-vs-commit segregation deferred to production (not a GMP requirement). No hard RBAC by default (R6).
+
+### Changed
+- **`co-design/PHASE_C_BUILD_OUT_PLAN.md`** — M2 reframed from "(proposal over a WP set)" to advisory/uncontrolled (D-15); OC-2 ⏳ OPEN → ✅ RESOLVED (D-16).
+- **`docs/A18_Runtime_Mode_Model.md`** — §2 reconciling note on `orch-ps` (reachable-by-class vs S19-matrix engine-internal/mode-agnostic).
+- **`co-design/VALOR_Build_Readiness_Gap_Assessment_v0.3.md`** — D-16 row + dated decision-log entry; doc stays v0.3.
+- **`co-design/SESSION_LOG.md`** — Session 20 entry + refreshed NEXT block (identity CODE → 🎉 C1, via `apply_session21.py`); S19 NEXT marked superseded.
+
+### Verification
+- Pack submodule untouched (`0ec3060`). Decision grounded against live pack: `DOC_FINALIZE_ARTIFACT` `confirm:true`; `doc.actors {author, reviewer, approver}` + `additionalProperties:true` on the document templates. D-15 drift grep: 2 doc touch-ups landed here; A16/A17/BUILD_STRATEGY/Phase-B/rest-of-A18 clean. No code; build `0.4.0`.
+
 ---
 
 ## [build-prep-0.19] — 2026-06-21 — Phase C / C1 Step 2: action×class×mode coverage matrix (CODE, build `0.4.0`)

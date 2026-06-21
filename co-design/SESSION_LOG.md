@@ -29,6 +29,49 @@
 
 ---
 
+## Session 20 — 2026-06-21  (**Phase C / C1 Engine · Step 3 prep — OC-2 DECIDED + D-15 drift reconcile**; doc-only, no code, no pack edits)
+**Focus:** Pre-build checkpoint for the identity step. The OC-2 / D-14-Option-B decision was settled with the owner (Amr) up front — *before* any identity code — and the Step-0 D-15 drift grep was run. Doc/reconcile-only, mirroring the S18 hygiene model; pack untouched at `0ec3060`, build unchanged at `0.4.0`. Co-design / doc by Mervat; owner commits/pushes.
+**Read this session:** the live pack at `0ec3060` — `CONTRACT_REGISTRY_v1.0.1.yaml` (the `DOC_GENERATE_DRAFT` / `DOC_FINALIZE_ARTIFACT` document actions, `confirm` flags, side-effect classes) and the document template schemas (`T1_VMP`, `T10_VSR`, `T3_Risk_Assessment` — the `doc.actors {author, reviewer, approver}` block, `additionalProperties:true`); plus the build-repo governing docs A16/A17/A18, the Phase-B/Phase-C plans, and `BUILD_STRATEGY.md` for the D-15 drift grep.
+
+### Decision settled (owner) — D-16 (OC-2 RESOLVED)
+- **Adopt D-14 Option B as a SOFT, multi-approver role→action map at `M-IDENTITY`.** With verified identity now landing at the A09 §6.2 seam, OC-2 is resolved in favour of adopting the role map — kept **soft** (warn-with-ack), not hard RBAC (R6).
+  - **Roles/profiles:** `read-only` (read only) · `editor` (author/edit + run the task path; **cannot** approve documents) · `approver` (may approve/finalize documents) · `admin` (all, always **logged**). The **CQV engineer** runs the full WP truth path (Stage/Commit/Plan/Apply/Export) **solo** — no segregation there (the pack imposes none on the task path).
+  - **Document approval = approver(s) ≠ author — MULTI-approver.** Each approval (e.g. head of production + head of quality; +engineering on a URS) is a **separate verified, logged** approval event. Carried at the **engine/audit layer**: the frozen `doc.actors.approver` is a single string but `actors` is `additionalProperties:true`, and the engine keeps the full signed approver set in its own audit record → **zero pack/schema change.**
+  - **Soft now, real later.** Single-user ⇒ approver≠author cannot be literally met; the rule is a warn-with-ack the owner (admin) clicks through, **logged**, never blocking testing (everything stamped `PRODUCT_TESTING_ONLY`, R5). Hard enforcement (refuse on mismatch / true multi-approver) activates at **multi-user (C4)**, owner's call on strictness then.
+  - **Deferred:** the propose-vs-commit segregation (one person proposes a plan, another commits) is **not** a GMP requirement — deferred to production, only if a client requires it.
+
+### What landed (doc/reconcile only — repo only, via installer)
+1. **D-15 drift grep — DONE; result: 2 minor doc touch-ups** (the targeted Step-0 check, *not* the full repo consistency audit, which stays reserved for the C1 exit gate):
+   - **`co-design/PHASE_C_BUILD_OUT_PLAN.md`** — M2 reframed from "(proposal over a WP set)" to advisory/uncontrolled wording (D-15); "proposal" was the term D-15 told us to retire, and every sibling doc already frames M2 neutrally.
+   - **`docs/A18_Runtime_Mode_Model.md`** — §2 reconciling note: the M1 row lists `orch-ps (4)` as reachable-by-class, while the S19 matrix exercises the 4 PS actions as **engine-internal / mode-agnostic** (off the 23×4 grid); both consistent — class-reachable in principle, exercised engine-internal in practice.
+   - Everything else (A16, A17, BUILD_STRATEGY, Phase-B plan, the rest of A18): **clean** — A18 is fully D-15-correct.
+2. **OC-2 closed** in `PHASE_C_BUILD_OUT_PLAN.md` (⏳ OPEN → ✅ RESOLVED, D-16).
+3. **`co-design/VALOR_Build_Readiness_Gap_Assessment_v0.3.md`** — D-16 row + dated log entry. Doc stays v0.3 (growing).
+4. **`CHANGELOG.md`** entry **build-prep-0.20**.
+
+### Decisions made
+- **D-16** (above) — OC-2 resolved; adopt D-14 Option-B as a soft, multi-approver role map at M-IDENTITY.
+
+### Checks (fresh-clone, container path)
+- Pack pinned + initialised at `0ec3060`; submodule **untouched**. Decision grounded against the live pack: `DOC_FINALIZE_ARTIFACT` is `confirm:true`; `doc.actors {author, reviewer, approver}` present on the document templates with `additionalProperties:true` (so multi-approver rides the engine/audit layer, zero pack change). Drift grep: 2 doc touch-ups, both landed here; no code, build stays `0.4.0`.
+
+### Artifacts produced (this session, for the owner to land — all via installer)
+- The five doc edits above, delivered as one gitignored **`apply_session20.py`** (LF-deterministic, idempotent, fail-closed, base64-embedded; pack never touched). **No code; build unchanged at `0.4.0`.** No non-repo (knowledge/UI) artifacts this session.
+
+### Open questions raised / carried
+- **None new. OC-2 RESOLVED (D-16).** Carried (non-blocking): **OC-4 → Phase E** (pack v1.1.0 + O4(b) KS trailing-newlines) · **M4-broader-scope** (parked) · O1 model (→ C2) · O2 UI (→ C3).
+
+### NEXT SESSION — **Phase C / C1 Engine · Step 3 — Identity / login (`M-IDENTITY`, backend), CODE → C1 CELEBRATION 🎉**  [START FRESH CHAT]
+OC-2 is decided (D-16) and the Step-0 drift is reconciled — this session is **pure identity code**.
+1. **Lift the A10 §3.2/§7 identity deferral at the A09 §6.2 seam:** integrate a real identity provider, populate the already-cut `actor.id` seam (frozen envelope permits it — **zero pack/schema change**), flip `identity_verified` true, validate authority for sensitive (`confirm:true`) actions, wire the A10 §8 security audit events. **Single-user.**
+2. **Implement the D-16 soft role map:** roles `read-only`/`editor`/`approver`/`admin` + `CQV engineer` task-path-solo; document finalize emits a soft "approver(s) ≠ author" warn-with-ack (admin clicks through, logged); the full approver set recorded at the engine/audit layer (zero pack change). **Soft only — no hard RBAC (R6);** hard enforcement → C4.
+3. Build on the B6/B7 spine + the S19 coverage surface; gates stay **log-only** (A17); outputs keep `PRODUCT_TESTING_ONLY` (R5); coverage stays green (the matrix is a regression fixture).
+4. **Exit:** every active action runs single-user across all 5 classes + 4 modes **with identity verified** at the A09 §6.2 seam; interface + pack contract unchanged; testing-only stamped. **→ 🎉 C1 Engine complete.**
+- **Deferred (origin: S19 close):** the **full repo consistency audit** stays reserved for the **C1 exit gate** (after identity), where it audits a finished milestone.
+- Lands via `apply_session21.py` + commit message.
+
+---
+
 ## Session 19 — 2026-06-21  (**Phase C / C1 Engine · Step 2 — Coverage matrix LANDED**; first Phase-C code, build `0.3.0`→`0.4.0`, no pack edits)
 **Focus:** The first code of Phase C and the second of C1 Engine's three sub-steps (hygiene → **coverage** → identity). The walking skeleton proved **one** vertical path; this drives **every active action** across the runtime-mode grid over the single `PS-PE-HIGH` preset, on the B6 spine, via the A16 §4 dynamic registry-load. One new decision (**D-15**) settled up front at the owner's request before any code. Co-design / build by Mervat; owner (Amr) commits/pushes.
 **Read this session:** the live pack at `0ec3060` — `CONTRACT_REGISTRY_v1.0.1.yaml` (the 39-action catalogue + per-action `side_effect`/`status`/`schema`), the result schemas the new handlers shape to (`work_package_schema`, `plan_validation_result`, `report_result`, `gantt_chart_result`, `rpt_artifact_metadata_schema`, `workbook_export_result`, `preset`/`ps_presets_list`/`ps_resolve_result`); plus the build-repo spine (`engine/{dispatch,registry,schemas,handlers,store,domain,audit}.py`, `modes/runtime.py`, `skeleton.py`) and `A18` §2/§3a.
@@ -57,7 +100,7 @@
 ### Open questions raised / carried
 - **None new.** C1 Step 2 CLOSED. Carried (non-blocking): **OC-2** (D-14 Option-B role→action map — the decision belongs to the **next** session, C1's identity step) · **OC-4 → Phase E** (pack v1.1.0 + O4(b) KS trailing-newlines) · **M4-broader-scope** (parked) · O1 model (→ C2) · O2 UI (→ C3).
 
-### NEXT SESSION — **Phase C / C1 Engine · Step 3 — Identity / login (`M-IDENTITY`, backend) → C1 CELEBRATION 🎉**  [START FRESH CHAT]
+### NEXT SESSION  ▸ superseded by Session 20 — **Phase C / C1 Engine · Step 3 — Identity / login (`M-IDENTITY`, backend) → C1 CELEBRATION 🎉**  [START FRESH CHAT]
 Coverage is green across the whole active surface. The **last C1 sub-step** completes the single-user engine and earns the 🎉.
 0. **D-15 drift reconcile — 5-min grep, BEFORE any identity code.** *(Origin: S19 close — flagged when folding the coverage landing; this is a targeted check, **not** the full repo consistency audit, which is deliberately deferred to the C1 **exit** gate — see note below.)* D-15 (M1 & M2 advisory; contracted generation M3-only) was amended into **A18 only**. Grep the other governing docs — primarily **A16**, **A17**, the Phase-B/Phase-C plans, and `BUILD_STRATEGY.md` — for now-stale text that still says M2 *generates* plan proposals / drafts or describes "non-binding generation" in M1/M2. Known suspect to resolve explicitly: **A18 §2's M1 row still lists `orch-ps (4)` among M1-reachable actions**, while the S19 matrix reclassified PS as **engine-internal / mode-agnostic** (exercised once, off the mode grid) — defensible by class (PS is RO/VO, so M1-reachable in principle) but a doc-vs-matrix framing mismatch worth reconciling before it calcifies. **If drift found:** fix inline as doc edits that ride the S20 installer. **If none:** record "D-15 drift check: clean" in the S20 log. Either outcome is recorded so the result (and any edit) traces to this step.
 1. **Lift the A10 §3.2/§7 identity deferral at the pack-named A09 §6.2 seam:** integrate a real identity provider, populate the **already-cut** `actor.id` seam (frozen envelope permits it — **zero pack/schema change**), flip `identity_verified` true, validate real-world authority for sensitive (`confirm:true`) actions, and wire the A10 §8 security audit events. **Single-user.**

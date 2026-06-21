@@ -36,7 +36,7 @@ Linear by owner decision: the **engine is finished first** (single-user, all CQV
 ### The CQV surface C1 must cover (verbatim from the pack at `0ec3060`)
 - **39 actions across 7 contracts.** By status: **23 ACTIVE + 4 ACTIVE-INTERNAL + 12 TESTING-ONLY**. C1 drives the **27 active**; the 12 testing-only stay behind `PRODUCT_TESTING_ONLY` (R5).
 - **5 side-effect classes:** 14 `READ_ONLY` · 10 `VALIDATE_ONLY` · 8 `MUTATES_TRUTH` · 6 `GENERATES_ARTIFACT` · 1 `STAGE_ONLY`. The B6 slice exercised mostly the `MUTATES_TRUTH` write path; the other four are not yet driven end-to-end.
-- **4 runtime modes (A18):** M1 Advisory (read/validate, 24 actions) · M2 Delivery Plan (proposal over a WP set) · M3 WP Mode (the only truth-writer) · M4 Project Mode (projection). The skeleton drives **M3 only**.
+- **4 runtime modes (A18):** M1 Advisory (read/validate, 24 actions) · M2 Delivery Plan (advisory view over a selected WP set — uncontrolled, D-15) · M3 WP Mode (the only truth-writer) · M4 Project Mode (projection). The skeleton drives **M3 only**.
 - **One preset.** The pack defines exactly **one** preset/profile/task-pool: `PS-PE-HIGH`. There are **no other effort classes** at v1.0.1 — additional presets would be a **pack v1.1.0** matter (Phase E), out of scope here. C1 covers the full surface *over this single preset*.
 - A16 §4 already intends the validation layer to **load actions/schemas dynamically from the registry** — so coverage is *additive by pattern*, not a rewrite.
 
@@ -103,7 +103,7 @@ Linear, owner-decided (resolves OC-3): engine first and complete, then AI, then 
 
 - **OC-1 — C5 concurrency scope:** ✅ **RESOLVED** — multi-user is **in Phase C** as milestone **C4**, last in Build-Out.
 - **OC-3 — C1/C2 ordering:** ✅ **RESOLVED** — **linear, engine-first** (identity is inside C1; AI is C2 after a complete engine).
-- **OC-2 — D-14 Option-B role→action authority map (inside C1's identity step):** ⏳ **OPEN** — adopt the role-map now with verified identity, or stay soft and defer the map further? Soft controls hold until decided; no default to hard RBAC (R6).
+- **OC-2 — D-14 Option-B role→action authority map (inside C1's identity step):** ✅ **RESOLVED (D-16, S20)** — adopt the map, **soft** + **multi-approver**: roles read-only/editor/approver/admin + CQV-engineer task-path-solo; document approval needs approver(s) ≠ author (carried at the engine/audit layer → zero pack change); warn-with-ack not refuse; admin logged, never blocked; hard enforcement → C4. No default to hard RBAC (R6).
 - **OC-4 — Pack v1.1.0 batch:** ⏳ **deferred to Phase E.** New CQV scope + the carried KS-newline cosmetics are the v1.1.0 candidates; that batch opens in **Phase E (Scope expansion)**, re-entering Phase-A freeze/manifest discipline. Not opened in Phase C.
 
 ---
