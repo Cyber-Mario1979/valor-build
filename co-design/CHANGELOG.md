@@ -37,6 +37,33 @@ Format follows the spirit of [Keep a Changelog](https://keepachangelog.com/). Ve
 ### Phase C — C1 Step 1 hygiene batch (build-prep-0.18)
 - **C1 hygiene & reconciliation batch landed (build-prep-0.18):** gate shorthand 6→5; schema-count 52/51 clarified; O4(a) CRLF cure APPLIED; G-10 fold CONFIRMED & closed; M4-reach = (A) keep READ_ONLY + projection-RPT (D-13). Doc/config-only; no code; pack untouched. Next: **C1 Step 2 — coverage (CODE)**.
 
+### Phase C — C1 Step 2: coverage matrix (build-prep-0.19)
+- **C1 action×class×mode coverage landed (build-prep-0.19):** the engine now exercises **all 27 active actions** (23 `ACTIVE_FROZEN` + 4 `ACTIVE_INTERNAL_FROZEN`) across the runtime-mode grid over the single `PS-PE-HIGH` preset, on the B6 dispatch/store/audit/stamp spine. New **D-15** (M1 & M2 advisory only — contracted generation is M3-only, consolidation M4; deletes A18's "contracted-but-non-binding" middle category). First Phase C code → build **`0.3.0`→`0.4.0`**; gates log-only (G-02/D-07). No pack edits.
+
+---
+
+## [build-prep-0.19] — 2026-06-21 — Phase C / C1 Step 2: action×class×mode coverage matrix (CODE, build `0.4.0`)
+
+First code of Phase C. The walking skeleton proved **one** vertical path; this closes the vertical-slice→full-coverage gap that C1 owns: every **active** action runs through the dispatch spine in each mode its side-effect class can reach, over the single `PS-PE-HIGH` preset, BUILD lifecycle, gates log-only (A17), outputs `PRODUCT_TESTING_ONLY` (R5). Co-design/build by Mervat; owner (Amr) commits/pushes. No pack edits; pack stays `0ec3060`.
+
+### Decided
+- **D-15 — M1 & M2 are advisory; contracted generation is M3-only.** Reach for both M1 and M2 is `READ_ONLY` + `VALIDATE_ONLY`. M2's "plan" is an **uncontrolled workflow cheat-sheet** (+ example artifacts) produced at the AI layer (C2), referencing real WP/task numbers but **not** a `PLAN_GENERATE_PROPOSAL`/`DOC_GENERATE_DRAFT` dispatch. All contracted generation → M3; consolidated `RPT_GENERATE_*` → M4. Deletes A18's "contracted-but-non-binding, stamped `PROPOSED`" middle category — a schema-valid contracted object can only originate on the truth path.
+
+### Added
+- **`src/valor_build/engine/coverage_handlers.py`** — `CoverageHandlers(Handlers)`: the 19 remaining active-action handlers (WP read + 6 truth mutations, PLAN validate, the RPT generate/validate/read family, the 4 PS internal-resolver actions). Thin, deterministic, schema-valid per each action's `result_schema_ref`; truth mutations through the store's single commit chokepoint.
+- **`src/valor_build/coverage.py`** — registry-driven matrix harness. Reads the active set **live** from `CONTRACT_REGISTRY_v1.0.1.yaml` via `engine.registry` (A16 §4 — no action list hard-coded), seeds a committed WP via the B6 walking skeleton, then fills a **96-entry** grid: 23 mode-gated actions × 4 modes (92) + 4 PS engine-internal. Each cell EXERCISED (dispatched green / B6 seed) or N/A with the recorded `ModeReachError` reason. `python -m valor_build.coverage`.
+- **`docs/C1_Coverage_Matrix.md`** — the committed, regenerated coverage report: **96 entries, 49 exercised, 47 N/A, 0 failed, 27/27 active actions.**
+- **`tests/test_coverage_matrix.py`** — 9 invariant tests (96-entry shape; 92+4 partition; registry 27-active / 12-testing-only; M3 reaches all 23; MUTATES/STAGE only M3; M1&M2 advisory + identical reach; M4 = READ_ONLY + projection-RPT only; every N/A records a reach reason).
+
+### Changed
+- **`src/valor_build/modes/runtime.py`** — `_REACHABLE[M2]` tightened to `{READ_ONLY, VALIDATE_ONLY}` (D-15); docstring updated. M1/M3/M4 unchanged (M4 keeps the projection-only RPT `GENERATES_ARTIFACT` exception, D-13).
+- **`docs/A18_Runtime_Mode_Model.md`** — §2 M1/M2 rows, §3 latitude rows, and §3a rewritten for D-15; D-15 amendment block added under §2.
+- **`co-design/VALOR_Build_Readiness_Gap_Assessment_v0.3.md`** — D-15 row + decision-log entry.
+- **Build version `0.3.0` → `0.4.0`** (`pyproject.toml`, `src/valor_build/__init__.py`).
+
+### Verification
+- Full suite **41 passed** (32 existing, regression-free + 9 new). Coverage harness green: 96 cells, 0 failed. Pack submodule untouched (`0ec3060`).
+
 ---
 
 ## [build-prep-0.18] — 2026-06-21 — Phase C / C1 Step 1: hygiene & reconciliation batch (doc/config-only)

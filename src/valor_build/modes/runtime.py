@@ -4,13 +4,27 @@ The runtime axis is **strictly separate** (R1) from the engine-authority axis
 (``DESIGN``/``EXECUTION``, a pack field) and the lifecycle axis (``ARCH``/``BUILD``).
 Here, the action's **side-effect class** is what bounds each mode — not prose:
 
-  * **M1 Advisory**      — READ_ONLY + VALIDATE_ONLY (+ non-binding generation, §3a)
-  * **M2 Delivery Plan** — READ_ONLY + VALIDATE_ONLY + GENERATES_ARTIFACT (proposals)
+  * **M1 Advisory**      — READ_ONLY + VALIDATE_ONLY (advisory only; see D-15)
+  * **M2 Delivery Plan** — READ_ONLY + VALIDATE_ONLY (advisory; see D-15)
   * **M3 WP Mode**       — every class, incl. STAGE_ONLY + MUTATES_TRUTH (the full path)
   * **M4 Project Mode**  — READ_ONLY + projection-only RPT artifacts; NO truth path (D-13)
 
 M3 is the **only** mode that reaches MUTATES_TRUTH/STAGE_ONLY. The classes do the
 enforcing: a mode that cannot reach a class refuses the action *before* dispatch.
+
+**D-15 (owner, S19) — M1 & M2 are advisory; contracted generation is M3-only.**
+A18 §2/§3a originally parked "non-binding generation" in M1 and listed
+``GENERATES_ARTIFACT`` (plan proposals) under M2. The owner's runtime model is
+cleaner and safer for regulated work: M1 and M2 are **both advisory** and reach
+*only* ``READ_ONLY`` + ``VALIDATE_ONLY`` at the contracted-engine level. M2's
+"plan" is an **uncontrolled workflow cheat-sheet** (and any example artifact, e.g.
+a URS) — AI advisory narrative produced at the AI layer (C2), **not** a
+``PLAN_GENERATE_PROPOSAL`` / ``DOC_GENERATE_DRAFT`` dispatch. The contracted CQV
+plan (the scheduled task table that feeds RPT and the M4 projection) is produced
+only on the **M3** truth path; consolidated ``RPT_GENERATE_*`` is **M4**. This
+deletes A18's "contracted-but-non-binding, stamped PROPOSED" middle category, so a
+schema-valid contracted object can never originate outside the truth path. A18
+§2/§3a is amended to match.
 
 **M4 projection reachability (reconciled to A18 §2, B5).** A18 §2 names M4's real
 actions as *"consolidated ``RPT_GENERATE_*`` over the set"* — and those are the
@@ -48,7 +62,7 @@ class RuntimeMode(str, Enum):
 # below — it cannot be expressed by class alone.
 _REACHABLE: dict[RuntimeMode, frozenset[str]] = {
     RuntimeMode.M1: frozenset({"READ_ONLY", "VALIDATE_ONLY"}),
-    RuntimeMode.M2: frozenset({"READ_ONLY", "VALIDATE_ONLY", "GENERATES_ARTIFACT"}),
+    RuntimeMode.M2: frozenset({"READ_ONLY", "VALIDATE_ONLY"}),  # D-15: advisory only
     RuntimeMode.M3: frozenset(
         {"READ_ONLY", "VALIDATE_ONLY", "STAGE_ONLY", "MUTATES_TRUTH", "GENERATES_ARTIFACT"}
     ),

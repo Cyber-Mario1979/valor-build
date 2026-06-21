@@ -31,12 +31,15 @@ Grounded against `CONTRACT_REGISTRY_v1.0.1.yaml` (7 contracts / 39 actions). The
 
 | Mode | Scope / entity | Reachable action classes | Real actions (registry) | Truth relation |
 |---|---|---|---|---|
-| **M1 Advisory** | any readable context | `READ_ONLY` + `VALIDATE_ONLY` (+ non-binding generation, see §3a) | all `orch-ks` (12), `orch-ps` (4), `WP_GET`, `RPT_LIST_ARTIFACTS`, `RPT_GET_ARTIFACT`, all `*_VALIDATE_*` | reads & validates only — **no truth, no staging** |
-| **M2 Delivery Plan** | a selected WP set (which WPs exist, how linked) | `READ_ONLY` + plan proposal + `VALIDATE_ONLY` | `PLAN_GENERATE_PROPOSAL`, `PLAN_VALIDATE_PROPOSAL`, `WP_GET` across set, consolidated `RPT_*` | produces `PROPOSED` — **proposes, never commits** |
+| **M1 Advisory** | any readable context | `READ_ONLY` + `VALIDATE_ONLY` (advisory only — **D-15**) | all `orch-ks` (12), `orch-ps` (4), `WP_GET`, `RPT_LIST_ARTIFACTS`, `RPT_GET_ARTIFACT`, all `*_VALIDATE_*` | reads & validates only — **no truth, no staging, no contracted generation** |
+| **M2 Delivery Plan** | a selected WP set (which WPs exist, how linked) | `READ_ONLY` + `VALIDATE_ONLY` (advisory — **D-15**) | `WP_GET` across set, all `*_VALIDATE_*`; the M2 "plan" is an **uncontrolled cheat-sheet** (AI narrative, C2 layer) referencing real WP/bundle/task numbers, **not** a `PLAN_GENERATE_PROPOSAL` dispatch | advisory only — **proposes nothing contracted; never commits** |
 | **M3 WP Mode** | within **one** WP — the full path | all classes incl. `STAGE_ONLY`, `MUTATES_TRUTH`, `GENERATES_ARTIFACT` | `WP_STAGE_TASKS` → `WP_COMMIT_STAGED_TASKS` → `WP_APPLY_PLAN_PROPOSAL` → `DOC_GENERATE_DRAFT`/`DOC_FINALIZE_ARTIFACT` → `RPT_*`; `WP_UPDATE_TASK_FIELDS`, baseline-setters, `WP_RECORD_CONFIRMATION` | **writes truth** — every `MUTATES_TRUTH` is `confirm:true`; human gate always on (A17/D-08); **D-12** governs amend/commit |
 | **M4 Project Mode** | a project composing `SELECTED_WP_SET` | `READ_ONLY` / projection + composition metadata | consolidated `RPT_GENERATE_*` over the set + references | **projection-only, NO truth gates (D-13)**; each WP runs M3 for its own truth; sole control = scope-bound |
 
 The classes do the enforcing: M1 reaches only the 24 read/validate actions; **M3 is the only mode that reaches the 8 `MUTATES_TRUTH` + 1 `STAGE_ONLY`**; M4 reaches none of them (it projects over what M3 already wrote).
+
+> **D-15 amendment (owner, S19) — M1 & M2 are advisory; contracted generation is M3-only.**
+> The original §2/§3a parked "non-binding generation" in M1 and listed `PLAN_GENERATE_PROPOSAL` (a `GENERATES_ARTIFACT`) under M2. That is **superseded**. M1 and M2 are **both advisory** and reach *only* `READ_ONLY` + `VALIDATE_ONLY` at the contracted-engine level. What M2 produces is an **uncontrolled "workflow cheat-sheet" / strategic plan** — a numbered workflow that references real WP, bundle, and task numbers — plus optional **example artifacts** (e.g. an example URS). These are **AI advisory narrative produced at the AI layer (C2)**, *not* a `PLAN_GENERATE_PROPOSAL` / `DOC_GENERATE_DRAFT` dispatch. The **contracted** CQV plan (the scheduled task table — Task ID / owner / duration / status / dates / dependency — that feeds `RPT_*` and the M4 projection) is produced **only** on the **M3** truth path; consolidated `RPT_GENERATE_*` is **M4**. This deletes the "contracted-but-non-binding, stamped `PROPOSED`" middle category: a schema-valid contracted object can **never** originate outside the truth path. Rationale: in a regulated CQV/GMP tool, uncontrolled advice and controlled artifacts must never blur, and re-entering the controlled path must be a deliberate M3 act — no silent promotion of a chat draft into truth. Enforced in `modes/runtime.py` (`_REACHABLE[M2] = {READ_ONLY, VALIDATE_ONLY}`) and verified by the C1 coverage matrix (`docs/C1_Coverage_Matrix.md`): GENERATES_ARTIFACT is N/A in M1/M2 for every action.
 
 ---
 
@@ -46,12 +49,12 @@ The classes do the enforcing: M1 reaches only the 24 read/validate actions; **M3
 
 | Mode | AI latitude | What the AI may do | Human role |
 |---|---|---|---|
-| **M1** | **HIGH** | read, validate, and **generate non-binding proposals/drafts** (§3a) | consumes advice; nothing to confirm (no truth touched) |
-| **M2** | **MEDIUM** | compose the WP set; generate plan proposals (`PROPOSED`) | selects/links WPs; proposals stay advisory |
+| **M1** | **HIGH** | read, validate, and produce **advisory narrative only** — uncontrolled cheat-sheets / example artifacts at the AI layer (§3a, **D-15**) | consumes advice; nothing to confirm (no truth, no contracted artifact) |
+| **M2** | **MEDIUM** | compose the WP set; produce an **uncontrolled cheat-sheet** referencing real WP/task numbers (no contracted proposal — **D-15**) | selects/links WPs; advisory only |
 | **M3** | **LOW** | propose staged sets, field updates, plan applications | **confirms every truth mutation** at the gate (§3b) |
 | **M4** | **COMPOSITIONAL** | propose which WPs to include + how to present the projection | bounds the selected set; owns each WP's truth via M3 |
 
-**3a — M1 ceiling (owner-decided).** M1 **may** generate non-binding output (`PLAN_GENERATE_PROPOSAL`, `DOC_GENERATE_DRAFT`), provided it is stamped **`PROPOSED`/`DRAFT` + `mode: M1`** so it can never be read as a delivery commitment. Pure read-only Advisory would needlessly cripple the mode whose purpose is to think out loud.
+**3a — M1/M2 ceiling (owner-decided; revised by D-15, S19).** M1 and M2 are **advisory**: they read, validate, and produce **uncontrolled** narrative — a workflow cheat-sheet referencing real WP/bundle/task numbers, and optional example artifacts (e.g. an example URS) — generated at the **AI layer (C2)**, never through a contracted `PLAN_GENERATE_PROPOSAL` / `DOC_GENERATE_DRAFT` dispatch. Such narrative is stamped **uncontrolled + `mode: M1`/`M2`** so it can never be read as a delivery commitment. The earlier ceiling that let M1 *generate* `PLAN_GENERATE_PROPOSAL` / `DOC_GENERATE_DRAFT` as "non-binding `PROPOSED`/`DRAFT`" is **withdrawn**: a schema-valid contracted object must originate on the M3 truth path, not in an advisory mode (see the D-15 amendment under §2).
 
 **3b — M3 confirmation granularity (owner-decided).** M3 keeps the pack's **gate-level batch confirmation** as the floor (A04_1 §4.2: one Yes/No per commit, one per apply). Finer per-item review is an optional UI affordance **deferred to O2**, not a B4 requirement — the gate already captures consent; mandatory per-item confirm would slow M3 with no governance gain.
 

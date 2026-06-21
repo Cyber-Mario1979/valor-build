@@ -29,6 +29,44 @@
 
 ---
 
+## Session 19 — 2026-06-21  (**Phase C / C1 Engine · Step 2 — Coverage matrix LANDED**; first Phase-C code, build `0.3.0`→`0.4.0`, no pack edits)
+**Focus:** The first code of Phase C and the second of C1 Engine's three sub-steps (hygiene → **coverage** → identity). The walking skeleton proved **one** vertical path; this drives **every active action** across the runtime-mode grid over the single `PS-PE-HIGH` preset, on the B6 spine, via the A16 §4 dynamic registry-load. One new decision (**D-15**) settled up front at the owner's request before any code. Co-design / build by Mervat; owner (Amr) commits/pushes.
+**Read this session:** the live pack at `0ec3060` — `CONTRACT_REGISTRY_v1.0.1.yaml` (the 39-action catalogue + per-action `side_effect`/`status`/`schema`), the result schemas the new handlers shape to (`work_package_schema`, `plan_validation_result`, `report_result`, `gantt_chart_result`, `rpt_artifact_metadata_schema`, `workbook_export_result`, `preset`/`ps_presets_list`/`ps_resolve_result`); plus the build-repo spine (`engine/{dispatch,registry,schemas,handlers,store,domain,audit}.py`, `modes/runtime.py`, `skeleton.py`) and `A18` §2/§3a.
+
+### Decision settled first (owner) — D-15
+- **M1 & M2 are advisory; contracted generation is M3-only.** Owner's runtime model, agreed as simpler + safer for regulated CQV/GMP than A18's original text: M1 and M2 reach **only** `READ_ONLY` + `VALIDATE_ONLY`. M2's "plan" is an **uncontrolled workflow cheat-sheet** (+ example artifacts, e.g. a URS) produced at the **AI layer (C2)** — referencing real WP/bundle/task numbers but **not** a `PLAN_GENERATE_PROPOSAL`/`DOC_GENERATE_DRAFT` dispatch. The **contracted** CQV plan (the scheduled task table that feeds `RPT_*` + the M4 projection) is produced only on the **M3** truth path; consolidated `RPT_GENERATE_*` is **M4**. Deletes A18's "contracted-but-non-binding, stamped `PROPOSED`" middle category: a schema-valid contracted object can never originate outside the truth path. Recorded as an **A18 §2/§3a amendment + D-15** in the gap assessment.
+
+### What landed (code + docs — repo only, via installer)
+1. **`src/valor_build/engine/coverage_handlers.py`** (NEW) — `CoverageHandlers(Handlers)`: the **19** remaining active-action handlers (WP read + 6 truth mutations; PLAN validate; the RPT generate/validate/read family; the 4 PS internal-resolver actions). Thin/deterministic like B6; each result validates against its `result_schema_ref`; truth mutations through the store's single commit chokepoint. The 19 + the 8 B6 handlers = the **27 active** actions.
+2. **`src/valor_build/coverage.py`** (NEW) — registry-driven matrix harness. Reads the active set **live** from the registry (A16 §4 — no action list hard-coded), seeds a committed WP via the B6 walking skeleton, then fills a **96-entry** grid: **23 mode-gated actions × 4 modes (92) + 4 PS engine-internal**. Each cell EXERCISED (dispatched green / B6 seed) or N/A with the recorded `ModeReachError` reason. `python -m valor_build.coverage`.
+3. **`docs/C1_Coverage_Matrix.md`** (NEW) — the committed, regenerated report: **96 entries · 49 exercised · 47 N/A · 0 failed · 27/27 active actions.** Reach pattern confirmed: DOC/PLAN GENERATES = M3 only; RPT GENERATES = M3 + M4 (projection, D-13); READ_ONLY = all 4; VALIDATE = M1/M2/M3; MUTATES/STAGE = M3 only; PS = engine-internal.
+4. **`tests/test_coverage_matrix.py`** (NEW) — 9 invariant tests (96-shape; 92+4 partition; registry 27-active / 12-testing-only; M3 reaches all 23; MUTATES/STAGE only M3; M1&M2 advisory + identical reach; M4 = READ_ONLY + projection-RPT only; every N/A records a reason).
+5. **`src/valor_build/modes/runtime.py`** (MODIFIED) — `_REACHABLE[M2]` → `{READ_ONLY, VALIDATE_ONLY}` (D-15); docstring updated. M1/M3/M4 unchanged (M4 keeps the projection-only RPT exception, D-13).
+6. **Docs** — `A18` §2/§3a + latitude rows amended for D-15 (+ a D-15 amendment block); `VALOR_Build_Readiness_Gap_Assessment_v0.3.md` D-15 row + log entry; `CHANGELOG.md` **build-prep-0.19**.
+7. **Version `0.3.0` → `0.4.0`** (`pyproject.toml`, `src/valor_build/__init__.py`).
+
+### Decisions made
+- **D-15** (above) — the only new D-series. M4-reach stays (A) per S18/D-13.
+
+### Checks (fresh-clone, container path)
+- Pack pinned + initialised at `0ec3060`; submodule **untouched**. Full suite **41 passed** (32 existing, regression-free + 9 new). Coverage harness green: 96 cells, 0 failed, 27/27 actions. Registry tally re-confirmed: 39 = 23 `ACTIVE_FROZEN` + 4 `ACTIVE_INTERNAL_FROZEN` + 12 `TESTING_ONLY_FROZEN`; the matrix drives the 27 active, KS excluded.
+
+### Artifacts produced (this session, for the owner to land — all via installer)
+- The five repo files above (1–5 + the version markers) and the three doc edits (6), delivered as one gitignored **`apply_session19.py`** (LF-deterministic, idempotent, fail-closed, base64-embedded; pack never touched). **First Phase-C code → build `0.4.0`.** No non-repo (knowledge/UI) artifacts this session.
+
+### Open questions raised / carried
+- **None new.** C1 Step 2 CLOSED. Carried (non-blocking): **OC-2** (D-14 Option-B role→action map — the decision belongs to the **next** session, C1's identity step) · **OC-4 → Phase E** (pack v1.1.0 + O4(b) KS trailing-newlines) · **M4-broader-scope** (parked) · O1 model (→ C2) · O2 UI (→ C3).
+
+### NEXT SESSION — **Phase C / C1 Engine · Step 3 — Identity / login (`M-IDENTITY`, backend) → C1 CELEBRATION 🎉**  [START FRESH CHAT]
+Coverage is green across the whole active surface. The **last C1 sub-step** completes the single-user engine and earns the 🎉.
+1. **Lift the A10 §3.2/§7 identity deferral at the pack-named A09 §6.2 seam:** integrate a real identity provider, populate the **already-cut** `actor.id` seam (frozen envelope permits it — **zero pack/schema change**), flip `identity_verified` true, validate real-world authority for sensitive (`confirm:true`) actions, and wire the A10 §8 security audit events. **Single-user.**
+2. **Decide OC-2 (D-14 Option B) here, explicitly:** adopt the role→action authority map now (with verified identity) **or** keep soft controls and defer the map further. **Do not** silently install hard RBAC — that's an owner decision, not a default (R6).
+3. Build on the B6/B7 spine + the S19 coverage surface; gates stay **log-only** (A17); outputs keep `PRODUCT_TESTING_ONLY` (R5); coverage stays green (the matrix is a regression fixture now).
+4. **Exit:** every active action runs for a single user across all 5 classes + 4 modes **with identity verified** at the A09 §6.2 seam; interface + pack contract unchanged; testing-only stamped. **→ 🎉 C1 Engine complete.**
+- Lands via `apply_session20.py` + commit message.
+
+---
+
 ## Session 18 — 2026-06-21  (**Phase C / C1 Engine · Step 1 — hygiene & reconciliation batch LANDED**; doc/config-only, no code, no pack edits)
 **Focus:** First Phase-C work item — the C1 hygiene batch that establishes a clean baseline *before* any engine code. Five atomic steps, all doc/config-only; pack untouched at `0ec3060`, build unchanged at `0.3.0`. Two steps needed the owner (Amr) up front (CRLF cure + M4-reach); both resolved this session. Co-design / doc by Mervat; owner commits/pushes.
 **Read this session:** the live pack at `0ec3060` — `A04_1` §4.1 (the five canonical gates), `STD-CQV-BASE_v1.0.1.yaml` (16 `CQV-REQ`, 1:1 with 16 `MAP-CQV-REQ`), the two add-on bundles + `source_to_internal_requirements` mapping, `schemas/documents/index.json` (the non-schema index manifest), and `CONTRACT_REGISTRY_v1.0.1.yaml` (39 actions / 7 contracts / 5 side-effect classes); plus the build-repo docs G-02 / Phase-B plan B3 / SESSION_LOG / A16 §schema-dialect.
@@ -57,7 +95,7 @@
 ### Open questions raised / carried
 - **None new.** C1 hygiene batch CLOSED. Carried (non-blocking): **OC-2** (D-14 Option-B role→action map — decide inside C1's identity step) · **OC-4 → Phase E** (pack v1.1.0 batch + O4(b) KS trailing-newlines) · **M4-broader-scope** (owner's parked idea) · O1 model (→ C2) · O2 UI (→ C3).
 
-### NEXT SESSION — **Phase C / C1 Engine · Step 2 — Coverage (CODE)**  [START FRESH CHAT]
+### NEXT SESSION  ▸ superseded by Session 19 — **Phase C / C1 Engine · Step 2 — Coverage (CODE)** [LANDED build-prep-0.19]  [START FRESH CHAT]
 Hygiene baseline is clean. This is the **first code of Phase C**: drive the engine across the full CQV surface over the single `PS-PE-HIGH` preset, via the A16 §4 dynamic registry-load path.
 1. **Coverage matrix** (read from `CONTRACT_REGISTRY_v1.0.1.yaml` @ `0ec3060`, no hard-coding): the **27 active actions** (= 23 `ACTIVE_FROZEN` + 4 `ACTIVE_INTERNAL_FROZEN`; the 12 `TESTING_ONLY_FROZEN` are a separate class) × **7 contracts** × all **5 side-effect classes** × all **4 runtime modes (M1–M4)** — every cell either exercised or explicitly N/A with a recorded reason.
 2. Reuse the B6 dispatch/store/audit/stamp spine + the B5 M4 projection; extend handlers to cover the actions the walking skeleton didn't touch.
