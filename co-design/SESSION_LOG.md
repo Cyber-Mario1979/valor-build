@@ -29,6 +29,42 @@
 
 ---
 
+## Session 21 — 2026-06-21  (**Phase C / C1 Engine · Step 3 — Identity / `M-IDENTITY`, CODE → 🎉 C1 COMPLETE**; code, no pack edits)
+**Focus:** Pure identity code — lift the identity deferral B7 carried as the named `M-IDENTITY` milestone. Verified local identity at the A09 §6.2 seam + the D-16 soft role→action map, validating real authority for sensitive actions (soft, never hard RBAC — R6). Closes C1 Engine: every active action runs single-user across all 5 side-effect classes + 4 runtime modes **with identity verified**. Build `0.4.0` → `0.5.0`; pack untouched at `0ec3060`. Co-design / build by Mervat; owner (Amr) runs the installer, commits/pushes.
+**Read this session:** the live pack at `0ec3060` — A09 §6.2/§7.1 (the integration seam + actor shape), A10 §3.2/§7/§8 (the deferral being lifted + soft controls + the security-event types), and the frozen `contract_request` `actor` block (`additionalProperties:true`, so `actor.id` rides today). Plus the build-layer spine: `engine/dispatch.py`, `engine/identity.py` (the B7 soft half), `engine/audit.py`, `engine/registry.py`, `skeleton.py`, `coverage.py`, and the B7 spec `docs/B7_Identity_Integration.md` §4 (the M-IDENTITY definition).
+
+### Decision settled (owner) — Option A (verified LOCAL identity)
+- **Sizing call, taken up front:** "integrate a real identity provider" = **verified local identity** (a genuine PBKDF2 credential check), **not** an external OIDC/SAML IdP. It satisfies the exit criterion (`identity_verified` truthfully flips true, `actor.id` populated, authority validated) without R6 scope-creep into a single-user `PRODUCT_TESTING_ONLY` build. A09 §6.2 is the documented swap point for an external IdP later, behind the same `IdentityProvider` surface, zero rework. Honesty bar held: "verified" = a real credential was presented and checked — never a self-declaration dressed up as verification.
+
+### What landed (code — repo only, via installer)
+1. **`src/valor_build/engine/identity.py`** — appended the verified half: `Principal` (verified actor), `Credential` + `make_credential` (salted PBKDF2-HMAC-SHA256, 120k rounds; secret never stored), `CredentialStore`, `LocalIdentityProvider.authenticate` (constant-time; `auth_event` on success, A10 §8 `EVT_SECURITY_POLICY_BLOCK` + `AuthenticationError` on failure; real `valor:uid:<user>` id). The B7 soft half is untouched.
+2. **`src/valor_build/engine/authority.py`** (new) — the D-16 map: `authorize(profile, spec)` keyed to the registry's own `confirm:true` flag (no parallel list); `evaluate_approval` (approver(s) ≠ author over the full signed set). Profiles read-only / editor / approver / admin / CQV.
+3. **`src/valor_build/engine/dispatch.py`** — `StepRequest` + `principal`/`author_id`/`approvals`; verified `identity_context` + envelope `actor` + output stamp carry the real `actor.id`/`profile`/`identity_verified`; **step 4b** authority validation for `confirm:true` (soft warn-with-ack; admin always authorized + `EVT_ADMIN_ACTION`; declined → `AUTHORITY_UNACKNOWLEDGED` + `EVT_SECURITY_POLICY_BLOCK`); `DOC_FINALIZE_ARTIFACT` records `document_approval` with the full approver set + the approver≠author soft check. **`principal=None` ⇒ the soft B7 path is byte-identical.**
+4. **`skeleton.py` / `coverage.py`** — optional `principal=` threaded through the slice + grid (the verified C1 exit demonstration).
+5. **`tests/test_identity_verified.py`** (new, 20) + **`docs/M_IDENTITY_Verified_Identity_Spec.md`** (new) + build bump `0.4.0`→`0.5.0` (`pyproject.toml`, `__init__.py`) + `CHANGELOG.md` **build-prep-0.21**.
+
+### Decisions made
+- **None new.** This session executes D-16 (settled S20) + the Option-A sizing call (settled up front, above). No new D-series.
+
+### Checks (fresh-clone, container path)
+- `pytest` → **61 passed** (41 prior + 20 M-IDENTITY). The unverified soft path + the S19 96-entry matrix fixture are unchanged; the matrix also runs green **with identity verified** (admin principal authenticated through a real credential check). A10 §8 security events fire with the correct shape (rationale + affected artifact IDs). Pack submodule **untouched** at `0ec3060`; build `0.5.0`. **→ 🎉 C1 Engine complete.**
+
+### Artifacts produced (this session, for the owner to land — all via installer)
+- The code + doc set above, delivered as one gitignored **`apply_session21.py`** (LF-deterministic, idempotent, fail-closed, base64-embedded; pack never touched). Build `0.4.0` → `0.5.0`. No non-repo (knowledge/UI) artifacts this session.
+
+### Open questions raised / carried
+- **None new. C1 Engine COMPLETE.** Carried (non-blocking): **OC-4 → Phase E** (pack v1.1.0 + O4(b) KS trailing-newlines) · **M4-broader-scope** (parked) · O1 model (→ C2) · O2 UI (→ C3). The **full repo consistency audit** (reserved at S19 close for the C1 exit gate) is now **due** — fold into C2 Step 0 or run as a standalone C1-exit checkpoint, owner's call.
+
+### NEXT SESSION — **Phase C / C2 — AI integration (Layer-2: M1/M2 advisory)**  [START FRESH CHAT]
+C1 Engine is complete; C2 is the first build-out on top of it — wiring real AI at Layer-2 behind the existing `ai/interface.py` seam (D-08; the model choice O1 lands here).
+1. **Wire a real LLM behind `LLMInterface`** (currently a deterministic stub): provider/model choice (D-08 — owner sizing call), prompt/response capture on the single audit channel (provenance already plumbed via `req.provenance`), schema-validated where the output feeds a contracted object.
+2. **M1/M2 advisory artifacts (D-15):** the AI layer produces **uncontrolled** workflow cheat-sheets + example artifacts referencing real WP/task numbers — explicitly **not** a `PLAN_GENERATE_PROPOSAL`/`DOC_GENERATE_DRAFT` dispatch (all contracted generation stays M3). Reach stays `READ_ONLY` + `VALIDATE_ONLY` for M1/M2 (the coverage matrix locks this).
+3. Gates stay **log-only** (A17); outputs `PRODUCT_TESTING_ONLY` (R5); identity available (verified path from C1). No pack edits.
+4. **Step 0:** run the deferred **full repo consistency audit** (the C1 exit gate) before C2 code, or confirm folding it in.
+- Lands via `apply_session22.py` + commit message.
+
+---
+
 ## Session 20 — 2026-06-21  (**Phase C / C1 Engine · Step 3 prep — OC-2 DECIDED + D-15 drift reconcile**; doc-only, no code, no pack edits)
 **Focus:** Pre-build checkpoint for the identity step. The OC-2 / D-14-Option-B decision was settled with the owner (Amr) up front — *before* any identity code — and the Step-0 D-15 drift grep was run. Doc/reconcile-only, mirroring the S18 hygiene model; pack untouched at `0ec3060`, build unchanged at `0.4.0`. Co-design / doc by Mervat; owner commits/pushes.
 **Read this session:** the live pack at `0ec3060` — `CONTRACT_REGISTRY_v1.0.1.yaml` (the `DOC_GENERATE_DRAFT` / `DOC_FINALIZE_ARTIFACT` document actions, `confirm` flags, side-effect classes) and the document template schemas (`T1_VMP`, `T10_VSR`, `T3_Risk_Assessment` — the `doc.actors {author, reviewer, approver}` block, `additionalProperties:true`); plus the build-repo governing docs A16/A17/A18, the Phase-B/Phase-C plans, and `BUILD_STRATEGY.md` for the D-15 drift grep.
@@ -61,7 +97,7 @@
 ### Open questions raised / carried
 - **None new. OC-2 RESOLVED (D-16).** Carried (non-blocking): **OC-4 → Phase E** (pack v1.1.0 + O4(b) KS trailing-newlines) · **M4-broader-scope** (parked) · O1 model (→ C2) · O2 UI (→ C3).
 
-### NEXT SESSION — **Phase C / C1 Engine · Step 3 — Identity / login (`M-IDENTITY`, backend), CODE → C1 CELEBRATION 🎉**  [START FRESH CHAT]
+### NEXT SESSION  ▸ superseded by Session 21 — **Phase C / C1 Engine · Step 3 — Identity / login (`M-IDENTITY`, backend), CODE → C1 CELEBRATION 🎉** [LANDED build-prep-0.21]  [START FRESH CHAT]
 OC-2 is decided (D-16) and the Step-0 drift is reconciled — this session is **pure identity code**.
 1. **Lift the A10 §3.2/§7 identity deferral at the A09 §6.2 seam:** integrate a real identity provider, populate the already-cut `actor.id` seam (frozen envelope permits it — **zero pack/schema change**), flip `identity_verified` true, validate authority for sensitive (`confirm:true`) actions, wire the A10 §8 security audit events. **Single-user.**
 2. **Implement the D-16 soft role map:** roles `read-only`/`editor`/`approver`/`admin` + `CQV engineer` task-path-solo; document finalize emits a soft "approver(s) ≠ author" warn-with-ack (admin clicks through, logged); the full approver set recorded at the engine/audit layer (zero pack change). **Soft only — no hard RBAC (R6);** hard enforcement → C4.

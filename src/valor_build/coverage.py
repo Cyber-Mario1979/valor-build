@@ -98,10 +98,16 @@ def active_specs(registry: ContractRegistry) -> list:
     return sorted(specs, key=lambda s: (s.contract_id, s.action_type))
 
 
-def run_coverage_matrix(store_root: Path | str, *, pack_root: Path | None = None) -> list[Cell]:
-    """Seed the B6 WP, then fill the 96-entry grid. Returns the cell list."""
+def run_coverage_matrix(store_root: Path | str, *, pack_root: Path | None = None,
+                        principal=None) -> list[Cell]:
+    """Seed the B6 WP, then fill the 96-entry grid. Returns the cell list.
+
+    When ``principal`` is a verified identity, the whole grid runs with identity
+    verified at the A09 §6.2 seam (the C1 exit demonstration); when None, the
+    unverified soft path (the S19 regression fixture).
+    """
     # 1. Seed a committed + planned + documented + exported WP (the B6 milestone).
-    seed = run_walking_skeleton(store_root, pack_root=pack_root)
+    seed = run_walking_skeleton(store_root, pack_root=pack_root, principal=principal)
     assert seed.all_ok, "coverage seed (walking skeleton) did not run green"
 
     registry = ContractRegistry(pack_root)
@@ -116,7 +122,7 @@ def run_coverage_matrix(store_root: Path | str, *, pack_root: Path | None = None
         return StepRequest(
             action=action_type, payload={}, target=target, runtime_mode=mode,
             lifecycle=Lifecycle.BUILD, engine_mode="EXECUTION", actor_role="CQV",
-            state="", gate=None, entry_condition_met=True,
+            state="", gate=None, entry_condition_met=True, principal=principal,
         )
 
     cells: list[Cell] = []

@@ -60,6 +60,7 @@ def run_walking_skeleton(
     audit_path: Path | None = None,
     pack_root: Path | None = None,
     audit: AuditLog | None = None,
+    principal=None,
 ) -> SkeletonResult:
     registry = ContractRegistry(pack_root)
     schemas = SchemaRegistry(pack_root)
@@ -74,6 +75,7 @@ def run_walking_skeleton(
     common = dict(
         payload={}, target=target, runtime_mode=RuntimeMode.M3,
         lifecycle=lifecycle, engine_mode="EXECUTION", actor_role="CQV",
+        principal=principal,
     )
 
     # (action, handler, gate, resulting-state-stamp)

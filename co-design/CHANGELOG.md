@@ -43,6 +43,30 @@ Format follows the spirit of [Keep a Changelog](https://keepachangelog.com/). Ve
 ### Phase C — C1 Step 3 prep: OC-2 decided + drift reconcile (build-prep-0.20)
 - **OC-2 RESOLVED + D-15 drift reconciled (build-prep-0.20):** new **D-16** — adopt D-14 Option-B as a **soft, multi-approver** role→action map at `M-IDENTITY` (roles read-only/editor/approver/admin + CQV-engineer task-path-solo; document approval needs approver(s) ≠ author, multi-approver carried at the engine/audit layer with **zero pack change**; soft warn-with-ack now, hard enforcement → C4). Step-0 D-15 drift grep run: 2 doc touch-ups (PHASE_C M2 "proposal" wording; A18 §2 `orch-ps` engine-internal note); rest clean. Doc-only; no code; build unchanged `0.4.0`; pack untouched. Next: **C1 Step 3 — identity (CODE)**.
 
+### Phase C — C1 Step 3: identity / M-IDENTITY — C1 COMPLETE 🎉 (build-prep-0.21)
+- **M-IDENTITY landed; C1 Engine complete (build-prep-0.21):** verified local identity at the A09 §6.2 seam — a real PBKDF2-HMAC-SHA256 credential check produces a verified `Principal` with a populated `actor.id` and `identity_verified=True` (**zero pack/schema change**; the frozen `actor` block is `additionalProperties:true`). New `engine/authority.py` carries the **D-16 soft role→action map**: validates real authority for `confirm:true` actions (admin all + always-logged; editor task-path but no document approve; approver finalizes controlled documents; CQV-engineer runs the WP truth path solo; read-only reads), with controlled-document **approver(s) ≠ author** recorded as the full signed approver **set** at the engine/audit layer. A10 §8 security events wired (`EVT_AUTH_SUCCEEDED` / `EVT_SECURITY_POLICY_BLOCK` / `EVT_ADMIN_ACTION`). **Soft only** — warn-with-ack, never hard RBAC (R6); hard enforcement → C4. The unverified soft path is byte-identical (`principal=None`). The 96-entry coverage matrix runs green **with identity verified**. Code → build **`0.4.0`→`0.5.0`**; gates log-only; outputs `PRODUCT_TESTING_ONLY` (R5). No pack edits; pack stays `0ec3060`. **→ 🎉 C1 Engine complete.**
+
+---
+
+## [build-prep-0.21] — 2026-06-21 — Phase C / C1 Step 3: identity / M-IDENTITY (CODE, build `0.5.0`) — 🎉 C1 Engine complete
+
+Lifts the identity deferral B7 carried as the named, non-droppable `M-IDENTITY` milestone. Verified local identity now lands at the pack-named A09 §6.2 seam, and the D-16 soft role→action map validates real authority for sensitive actions — soft (warn-with-ack), never hard RBAC (R6). With this, **C1 Engine is complete**: every active action runs single-user across all five side-effect classes and all four runtime modes with identity verified. Owner sizing call settled up front — **Option A (verified local identity)**, not an external IdP, to satisfy the exit criterion without R6 scope creep into a single-user test build. Co-design/build by Mervat; owner (Amr) commits/pushes. No pack edits; pack stays `0ec3060`.
+
+### Added
+- **`src/valor_build/engine/identity.py`** (verified half) — `Principal` (verified actor: `id`/`profile`/`role`/`name?`/`verified`); `Credential` + `make_credential` (salted PBKDF2-HMAC-SHA256, 120k rounds; secret never stored); `CredentialStore`; `LocalIdentityProvider.authenticate` (constant-time compare; `auth_event` on success, A10 §8 `EVT_SECURITY_POLICY_BLOCK` + `AuthenticationError` on failure; real, stable `valor:uid:<user>` id). The B7 soft-control half (`RoleContext`, `actor_block`, `requires_role_ack`) is unchanged.
+- **`src/valor_build/engine/authority.py`** (new) — the D-16 role→action map: `authorize(profile, spec)` keyed to the registry's own `confirm:true` flag (no parallel action list); `evaluate_approval` (approver(s) ≠ author over the full signed set). Profiles: read-only / editor / approver / admin / CQV.
+- **`tests/test_identity_verified.py`** (20) — authentication (success/wrong-secret/unknown-user/no-clear-secret/unknown-profile); the D-16 map per profile; approver≠author; the verified dispatch path (`identity_verified` flip, `actor.id` populated, admin always logged, soft warn-with-ack on lacking authority, declined → refusal + security block); and the **C1 exit**: the 96-entry matrix green with identity verified.
+- **`docs/M_IDENTITY_Verified_Identity_Spec.md`** (new) — the milestone spec (grounding, what landed, soft-not-hard, scope, checks).
+
+### Changed
+- **`src/valor_build/engine/dispatch.py`** — `StepRequest` gains `principal` / `author_id` / `approvals`; verified `identity_context` (`identity_verified=True` + real `actor.id` + `profile`); envelope `actor` + output stamp carry the verified id; **step 4b** authority validation for `confirm:true` when a principal is present (soft warn-with-ack; admin always authorized + `EVT_ADMIN_ACTION`; declined → `AUTHORITY_UNACKNOWLEDGED` + `EVT_SECURITY_POLICY_BLOCK`); controlled-document `DOC_FINALIZE_ARTIFACT` runs the approver≠author check + records `document_approval` with the full approver set. **When `principal=None` the soft B7 path is byte-identical.**
+- **`src/valor_build/skeleton.py`**, **`src/valor_build/coverage.py`** — optional `principal=` threaded through the slice + grid (the verified C1 exit demonstration).
+- **`pyproject.toml`**, **`src/valor_build/__init__.py`** — build `0.4.0` → `0.5.0`.
+- **`co-design/SESSION_LOG.md`** — Session 21 entry + refreshed NEXT block (C2 — AI integration / Layer-2).
+
+### Verification
+- Fresh-clone `pytest` → **61 passed** (41 prior + 20 M-IDENTITY). The unverified soft path + the S19 96-entry matrix fixture are unchanged; the matrix also runs green **with identity verified** (admin principal). Pack submodule untouched at `0ec3060`. Build `0.5.0`. **→ 🎉 C1 Engine complete.**
+
 ---
 
 ## [build-prep-0.20] — 2026-06-21 — Phase C / C1 Step 3 prep: OC-2 decided + D-15 drift reconcile (doc-only)
